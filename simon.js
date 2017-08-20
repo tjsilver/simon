@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 
   /* buttons */
 
@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
   var strict = document.getElementById('strict')
   var strictIndicator = document.getElementById('strict-indicator');
   var strictOn = false;
+  var timeInterval = 1000;
   const WEDGES = ['green', 'red', 'blue', 'yellow'];
 
   start.addEventListener('click', startPress, false);
@@ -23,12 +24,12 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   function startPress() {
-    console.log("this.id", this.id);
+    console.log("*******startPress with this.id", this.id);
     var id = this.id;
     var startButton = this;
     buttonDown(startButton);
     //timer then buttonup
-    setInterval(function() {
+    setTimeout(function () {
       buttonUp(startButton);
     }, 500);
     if (game.reset()) {
@@ -55,12 +56,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var game = {
     gameStarted: false,
-    aiFinished: true,
-    arr: [],
+    playerTurn: false,
+    gameArr: [],
+    playerArr: [],
     count: 0,
+    timeListen: this.timeInterval * this.count,
     reset() {
       console.log("Game reset");
-      this.arr = [];
+      this.gameArr = [];
       this.count = 0;
       return true;
     },
@@ -70,61 +73,98 @@ document.addEventListener("DOMContentLoaded", function() {
       return rand;
     },
     lightUp(colour) {
-      console.log("lightUp colour: ",colour);
+      console.log("*******lightUp() colour: ", colour);
       var wedge = document.getElementById(colour);
       wedge.classList.add('light');
       wedge.classList.remove('dark');
-      setTimeout(function() {
+      setTimeout(function () {
         wedge.classList.add('dark');
         wedge.classList.remove('light');
-      }, 1000);
+      }, timeInterval);
     },
     start() {
-      console.log("new game started!");
+      console.log("&&&&&&&& game.start()");
       this.gameStarted = true;
       this.aiTurn();
     },
-    aiTurn() {
-      this.fillArray();
-    },
     fillArray() {
-      if (this.count >= 0 && this.count <20) {
+      console.log("*********game.fillArray()")
+      if (this.count >= 0 && this.count < 20) {
         var rand = this.random();
         console.log("rand from fillArray", rand);
-        this.arr.push(rand);
+        this.gameArr.push(rand);
         this.count++;
         console.log("count", this.count);
-        console.log("arr length", this.arr.length);
-        console.log("arr",this.arr);
+        console.log("gameArr length", this.gameArr.length);
+        console.log("gameArr", this.gameArr);
       }
       this.displayMoves();
     },
     displayMoves() {
-      var index = 0;
-      var movesArray = this.arr;
-      function nextWedge() {
-        console.log("displayMoves WEDGES[this.arr[index]]:",WEDGES[movesArray[index]]);
-        game.lightUp(WEDGES[movesArray[index]]);
-        index++;
-      }
-      nextWedge();
-      var glow = window.setInterval(function () {
-        if (index >= movesArray.length) {
-          clearTimeout(glow);
-          playerTurn = true;
-          return;
+      var i = 0;
+      l = game.gameArr.length;
+      (function loop() {
+        console.log("game.gameArr[i]:", game.gameArr[i],'i:', i);
+        game.lightUp(WEDGES[game.gameArr[i]]);
+        if (++i < l) {
+          setTimeout(loop, timeInterval);
+        } else {
+            game.playerOn();
         }
-        nextWedge();
-      }, 750);
+      })(); // loop called immediately to start it off
+
     },
-    playerTurn() {
-      console.log("it's the players's turn");
+    playerOn() {
+      console.log('****** playerOn()')
+      game.playerTurn = true;
+      console.log("game.playerTurn:", game.playerTurn);
+      game.playerArr = [];
+    },
+    aiTurn() {
+      console.log("******* game.AiTurn()")
+      game.fillArray();
+    //  game.playerTurn = false;
+    },
+    makePlayerMove(colour) {
+      console.log("******makePlayerMove(),count:", game.count);
+      game.playerArr.push(colour);
+      console.log('playerArr', game.playerArr)
+      game.lightUp(colour);
+      if (game.playerArr.length == game.count) {
+        game.playerTurn = false;
+        console.log('no longer player turn')
+        game.compare();
+      }
+    },
+    compare() {
+        console.log('--------------Compare()')
+      if (game.playerTurn == false) {
+          for (var i = 0; i < game.gameArr.length; i++) {
+          console.log('i:',i,'game',WEDGES[game.gameArr[i]], 'player', game.playerArr[i]);
+          if (WEDGES[game.gameArr[i]] != game.playerArr[i]) {
+            console.log("error")
+            return;
+              // SHOW SEQUENCE AGAIN OR START FROM SCRATCH
+          }
+
+        }
+      }
+      console.log("correct")
+      game.fillArray();
       return;
+        // MAKE ANOTHER GAME MOVE
     }
   }
 
   function wedgeClick(e) {
-    console.log(e.target.id + ' was clicked');
+    var w = e.target.id;
+    console.log("wedgeClick():", w, 'was clicked');
+    console.log("game.playerTurn is ", game.playerTurn)
+    if (game.playerTurn == true && game.playerArr.length < game.count) {
+      game.makePlayerMove(w)
+    } else {
+      console.log('now turn for AI again')
+    }
   }
 
 
