@@ -126,6 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
     //  game.playerTurn = false;
     },
     makePlayerMove(colour) {
+      //TODO: MAKE IT SO THAT IT COMPARES EVERY MOVE INDIVIDUALLY AGAINST THE CORRECT ITEM IN THE GAME ARRAY.
       console.log("******makePlayerMove(),count:", game.count);
       game.playerArr.push(colour);
       console.log('playerArr', game.playerArr)
