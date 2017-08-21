@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (this.count >= 0 && this.count < 20) {
         var rand = this.random();
         console.log("rand from fillArray", rand);
-        this.gameArr.push(rand);
+        this.gameArr.push(WEDGES[rand]);
         this.count++;
         console.log("count", this.count);
         console.log("gameArr length", this.gameArr.length);
@@ -105,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
       l = game.gameArr.length;
       (function loop() {
         console.log("game.gameArr[i]:", game.gameArr[i],'i:', i);
-        game.lightUp(WEDGES[game.gameArr[i]]);
+        game.lightUp(game.gameArr[i]);
         if (++i < l) {
           setTimeout(loop, timeInterval);
         } else {
@@ -123,38 +123,39 @@ document.addEventListener("DOMContentLoaded", function () {
     aiTurn() {
       console.log("******* game.AiTurn()")
       game.fillArray();
-    //  game.playerTurn = false;
     },
     makePlayerMove(colour) {
-      //TODO: MAKE IT SO THAT IT COMPARES EVERY MOVE INDIVIDUALLY AGAINST THE CORRECT ITEM IN THE GAME ARRAY.
       console.log("******makePlayerMove(),count:", game.count);
-      game.playerArr.push(colour);
-      console.log('playerArr', game.playerArr)
-      game.lightUp(colour);
-      if (game.playerArr.length == game.count) {
-        game.playerTurn = false;
-        console.log('no longer player turn')
-        game.compare();
-      }
-    },
-    compare() {
-        console.log('--------------Compare()')
-      if (game.playerTurn == false) {
-          for (var i = 0; i < game.gameArr.length; i++) {
-          console.log('i:',i,'game',WEDGES[game.gameArr[i]], 'player', game.playerArr[i]);
-          if (WEDGES[game.gameArr[i]] != game.playerArr[i]) {
-            console.log("error")
-            return;
-              // SHOW SEQUENCE AGAIN OR START FROM SCRATCH
-          }
+      //new code
+      var playerCount = game.count - 1;
+      console.log('playerCount', playerCount);
+      game.compare(playerCount, colour)
 
+    },
+    //new compare
+    compare(pCount, col) {
+      console.log('******* new compare()')
+      if (game.gameArr[pCount] == col) {
+        console.log("same");
+        if (pCount + 1 == game.count) {
+          console.log('end of playerTurn')
+          game.playerTurn = false;
+          game.fillArray();
+        }
+      } else {
+        console.log("different");
+        console.log("start again");
+        game.playerTurn = false;
+        if (strictOn) {
+          game.reset();
+          game.start();
+        } else {
+          console.log('replay moves');
+          // REPLAY MOVES
         }
       }
-      console.log("correct")
-      game.fillArray();
-      return;
-        // MAKE ANOTHER GAME MOVE
     }
+
   }
 
   function wedgeClick(e) {
@@ -170,3 +171,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 });
+/*
+compare() {
+    console.log('--------------Compare()')
+  if (game.playerTurn == false) {
+      for (var i = 0; i < game.gameArr.length; i++) {
+      console.log('i:',i,'game',WEDGES[game.gameArr[i]], 'player', game.playerArr[i]);
+      if (WEDGES[game.gameArr[i]] != game.playerArr[i]) {
+        console.log("error")
+        return;
+          // SHOW SEQUENCE AGAIN OR START FROM SCRATCH
+      }
+
+    }
+  }
+  console.log("correct")
+  game.fillArray();
+  return;
+    // MAKE ANOTHER GAME MOVE
+}//end compare()
+*/
+//end new code
+/*
+game.playerArr.push(colour);
+console.log('playerArr', game.playerArr)
+game.lightUp(colour);
+if (game.playerArr.length == game.count) {
+  game.playerTurn = false;
+  console.log('no longer player turn')
+  game.compare();
+}
+*/
