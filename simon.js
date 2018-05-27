@@ -62,12 +62,12 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(function () {
       buttonUp(start);
     }, 500);
-    if (game.reset()) {
-      game.start();
-    }
+    newgame = new Game();
+    newgame.start()
   }
   /* game */
-  function game() {
+  function Game() {
+    // private
     var gameStarted = false,
     playerTurn = false,
     gameArr = [],
@@ -75,18 +75,18 @@ document.addEventListener("DOMContentLoaded", function () {
     numSteps = 0,
     playerMoves = 0,
     timeListen = timeInterval * this.numSteps;
-    this.reset = function() {
+    var reset = function() {
       console.log("Game reset");
-      game.gameArr = [];
-      game.playerArr = [];
-      game.numSteps = 0;
+      gameArr = [];
+      playerArr = [];
+      numSteps = 0;
       return true;
-    }
+    };
     this.random = function() {
       //generate a random number between 0 and 3;
-      var rand = Math.round(Math.random() * 3);
-      return rand;
+      return Math.floor(Math.random() * 3);
     }
+    };
     this.lightUp = function(colour) {
       console.log("*******lightUp() colour: ", colour);
       var wedge = document.getElementById(colour);
@@ -96,31 +96,31 @@ document.addEventListener("DOMContentLoaded", function () {
         wedge.classList.add('dark');
         wedge.classList.remove('light');
       }, timeInterval);
-    }
+    };
     this.start = function() {
       console.log("&&&&&&&& game.start()");
       this.gameStarted = true;
-      setTimeout(game.aiTurn, timeInterval);
-    }
+      setTimeout(this.aiTurn, timeInterval);
+    };
     this.addToSequence = function() {
       console.log("*********game.addToSequence()")
-      if (game.numSteps >= 0 && game.numSteps < 20) {
-        var rand = game.random();
+      if (this.numSteps >= 0 && this.numSteps < 20) {
+        var rand = this.random();
         console.log("rand from addToSequence", rand);
-        game.gameArr.push(WEDGES[rand]);
-        game.numSteps++;
-        console.log("numSteps", game.numSteps);
-        console.log("gameArr length", game.gameArr.length);
-        console.log("gameArr", game.gameArr);
+        this.gameArr.push(WEDGES[rand]);
+        this.numSteps++;
+        console.log("numSteps", this.numSteps);
+        console.log("gameArr length", this.gameArr.length);
+        console.log("gameArr", this.gameArr);
       }
       this.displayMoves();
-    }
+    };
     this.displayMoves = function() {
       var i = 0;
-      l = game.gameArr.length;
+      l = this.gameArr.length;
       (function loop() {
-        console.log("game.gameArr[i]:", game.gameArr[i],'i:', i);
-        game.lightUp(this.gameArr[i]);
+        console.log("this.gameArr[i]:", this.gameArr[i],'i:', i);
+        this.lightUp(this.gameArr[i]);
         if (++i < l) {
           setTimeout(loop, timeInterval);
         } else {
@@ -128,23 +128,23 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       })(); // loop called immediately to start it off
 
-    }
+    };
     this.playerOn = function() {
       console.log('****** playerOn()')
       this.playerTurn = true;
       console.log("this.playerTurn:", this.playerTurn);
       this.playerArr = [];
       startTiming();
-    }
+    };
     this.playerOff = function() {
       console.log("playerOff!");
       this.playerTurn = false;
       console.log('this.playerTurn:', this.playerTurn);
-    }
+    };
     this.aiTurn = function() {
       console.log("******* this.AiTurn()");
       this.addToSequence();
-    }
+    };
     this.makePlayerMove = function(colour) {
       console.log("******makePlayerMove(),numSteps:", this.numSteps);
       this.playerArr.push(colour)
@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (this.playerMoves == this.numSteps) {
         this.compare();
       }
-    }
+    };
     this.compare = function() {
       console.log('*******compare()')
       for (let i=0; i<this.numSteps; i++) {
@@ -176,8 +176,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
       this.aiTurn();
-    }
-  }; // end game class
+    };
+  }; // end Game class
 
 
   function startTiming() {
@@ -210,4 +210,4 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 
-});
+}); // end DOMContentLoaded
