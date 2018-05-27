@@ -165,11 +165,11 @@ button.pressed {
   border-right: 1px solid black;
 }
 
-button.closed {
+.closed {
   pointer-events: none;
 }
 
-button.open {
+.open {
   pointer-events: auto;
 }
 
