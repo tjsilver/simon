@@ -28,8 +28,8 @@ document.addEventListener("DOMContentLoaded", function () {
     strictOn = false;
 
   /* global variables */
-  var SHORT_INTERVAL = 1500;
-  var LONG_INTERVAL = SHORT_INTERVAL * 1.5;
+  const SHORT_INTERVAL = 1500;
+  const LONG_INTERVAL = SHORT_INTERVAL * 1.5;
   const WEDGES = ['green', 'red', 'blue', 'yellow'];
   const MOVES = 20;
 
@@ -128,44 +128,49 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       lightSequence();
     },
+    /** Reacts to clicks of the buttons, depending on whether it's the player's turn.*/
+    reactToClick = function(buttonColour) {
+      if (playerTurn) {
+        playerArr.push(buttonColour)
+      }
+    },
     /** Listens for user clicking on coloured buttons.*/
     wedgeClick = function(e) {
-      var w = e.target.id;
+      var buttonColour = e.target.id;
       console.log("wedgeClick():", w, 'was clicked');
+      reactToClick(buttonColour);
     },
     /** Plays a game of Simon */
     playGame = function() {
       gameStarted = true;
       // set number of steps to 1
-      currentStep = 1;
+      currentStep = 5;
       while (gameStarted) {
         // play sequence up to currentStep
         playSequence();
         gameStarted = false; // remove this later
+        // wait for sequence to play
+        var aiWait = (SHORT_INTERVAL + LONG_INTERVAL) * currentStep; // sort out this timer
+        setTimeout(function() {
+            playerTurn = true;
+            console.log('playerTurn is true?', playerTurn)
+        }, aiWait)
         // wait for response
-        setTimeout(function(
-
-        ){}, (SHORT_INTERVAL + LONG_INTERVAL) * currentStep)
-        // fill response array
+        var playerWait = aiWait + LONG_INTERVAL * currentStep;
+        setTimeout(function() {
+          playerTurn = false;
+            console.log('playerTurn is false?', playerTurn)
+        }, playerWait)
         // check response array element against corresponding element in sequence array
         // if wrong, indicate error
         // start sequence again from beginning
         // if correct increment currentStep and play sequence again
-        currentStep++
+        currentStep++;
+        if (currentStep == MOVES) {
+          gameStarted = false;
+        }
       } // end while
   }, // end playGame
-    playerOn = function() {
-      console.log('****** playerOn()')
-      playerTurn = true;
-      console.log("this.playerTurn:", playerTurn);
-      playerArr = [];
-      startTiming();
-    },
-    playerOff = function() {
-      console.log("playerOff!");
-      playerTurn = false;
-      console.log('this.playerTurn:', playerTurn);
-    },
     aiTurn = function() {
       console.log("******* this.AiTurn()");
       // what are we doing here?

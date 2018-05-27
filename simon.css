@@ -5,8 +5,6 @@
   -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  cursor: pointer;
-  cursor: hand;
 }
 
 body {
@@ -171,6 +169,8 @@ button.pressed {
 
 .open {
   pointer-events: auto;
+  cursor: pointer;
+  cursor: hand;
 }
 
 #start {
