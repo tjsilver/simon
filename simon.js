@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
         lightUp(sequence[i]);
         i++;
         if (i < currentStep) {
-          setTimeout(lightSequence, timeInterval)
+          setTimeout(lightSequence, timeInterval*2)
         }
       }
       lightSequence();
