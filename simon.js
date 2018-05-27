@@ -67,9 +67,9 @@ document.addEventListener("DOMContentLoaded", function () {
     newgame.start()
   }
   /**
-  * Represents a game of Simon.
-  * @constructor
-  */
+   * Represents a game of Simon.
+   * @constructor
+   */
   function Game() {
     // private
     var gameStarted = false,
