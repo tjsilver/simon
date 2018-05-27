@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
     playerArr = [],
     currentStep = 1,
     playerMoves = 0,
-    timeListen = SHORT_INTERVAL * this.currentStep,
+    timeListen = SHORT_INTERVAL * currentStep,
     /** Generates a random number between 0 and 3.*/
     randomColourIndex = function() {
       return Math.floor(Math.random() * 3);
@@ -115,6 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
         wedge.classList.remove('light');
       }, SHORT_INTERVAL);
     },
+    /** Plays a sequence of coloured buttons */
     playSequence = function() {
       console.log(currentStep);
       var i = 0;
@@ -127,6 +128,32 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       lightSequence();
     },
+    /** Listens for user clicking on coloured buttons.*/
+    wedgeClick = function(e) {
+      var w = e.target.id;
+      console.log("wedgeClick():", w, 'was clicked');
+    },
+    /** Plays a game of Simon */
+    playGame = function() {
+      gameStarted = true;
+      // set number of steps to 1
+      currentStep = 1;
+      while (gameStarted) {
+        // play sequence up to currentStep
+        playSequence();
+        gameStarted = false; // remove this later
+        // wait for response
+        setTimeout(function(
+
+        ){}, (SHORT_INTERVAL + LONG_INTERVAL) * currentStep)
+        // fill response array
+        // check response array element against corresponding element in sequence array
+        // if wrong, indicate error
+        // start sequence again from beginning
+        // if correct increment currentStep and play sequence again
+        currentStep++
+      } // end while
+  }, // end playGame
     playerOn = function() {
       console.log('****** playerOn()')
       playerTurn = true;
@@ -162,30 +189,11 @@ document.addEventListener("DOMContentLoaded", function () {
       // do we need this?
       aiTurn();
     };
-
-
     /* public functions */
     this.start = function() {
       console.log("****** new Game started");
       gameReset();
-      gameStarted = true;
-      // set number of steps to 1
-      currentStep = 1;
-      while (gameStarted) {
-        // play sequence up to currentStep
-        playSequence();
-        gameStarted = false; // remove this later
-        // wait for response
-        setTimeout(function(
-
-        ){}, (SHORT_INTERVAL + LONG_INTERVAL) * currentStep)
-        // fill response array
-        // check response array element against corresponding element in sequence array
-        // if wrong, indicate error
-        // start sequence again from beginning
-        // if correct increment currentStep and play sequence again
-        currentStep++
-      } // end while
+      playGame();
     }; // end start()
   }; // end Game class
 
@@ -211,12 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function wedgeClick(e) {
     var w = e.target.id;
     console.log("wedgeClick():", w, 'was clicked');
-    console.log("game.playerTurn is ", game.playerTurn)
-    if (game.playerTurn == true && game.playerArr.length < game.currentStep) {
-      game.makePlayerMove(w);
-    } else {
-      console.log('now turn for AI again');
-    }
+
   }
 
   /** TODO: DELETE?
