@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
     /* private */
     var gameStarted = false,
     playerTurn = false,
-    gameArr = [],
+    sequence = [],
     playerArr = [],
     currentStep = 1,
     playerMoves = 0,
@@ -97,8 +97,8 @@ document.addEventListener("DOMContentLoaded", function () {
       return arr;
     },
     /** Resets the game.*/
-    reset = function() {
-      console.log("Game reset");
+    gameReset = function() {
+      console.log("Game gameReset");
       gameStarted = false;
       sequence = fillSequence();
       playerArr = [];
@@ -107,7 +107,6 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     /** Lights up a wedge for a period of time. */
     lightUp = function(colour) {
-      console.log("*******lightUp() colour: ", colour);
       var wedge = document.getElementById(colour);
       wedge.classList.add('light');
       wedge.classList.remove('dark');
@@ -127,102 +126,67 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
       lightSequence();
+    },
+    playerOn = function() {
+      console.log('****** playerOn()')
+      playerTurn = true;
+      console.log("this.playerTurn:", playerTurn);
+      playerArr = [];
+      startTiming();
+    },
+    playerOff = function() {
+      console.log("playerOff!");
+      playerTurn = false;
+      console.log('this.playerTurn:', playerTurn);
+    },
+    aiTurn = function() {
+      console.log("******* this.AiTurn()");
+      // what are we doing here?
+    },
+    makePlayerMove = function(colour) {
+      console.log("******makePlayerMove(),currentStep:", currentStep);
+      playerArr.push(colour)
+      console.log('this.playerArr:',playerArr)
+      playerMoves++;
+      console.log('this.playerMoves:', playerMoves);
+      if (playerMoves == currentStep) {
+        compare();
+      }
+    },
+    compare = function() {
+      // compare current click colour to array
+      // if it's right, continue
+      // if it's wrong, restart sequence
+
+
+      // do we need this?
+      aiTurn();
     };
 
 
     /* public functions */
     this.start = function() {
       console.log("****** new Game started");
-      reset();
+      gameReset();
       gameStarted = true;
       // set number of steps to 1
-      currentStep = 5;
+      currentStep = 1;
       while (gameStarted) {
         // play sequence up to currentStep
         playSequence();
         gameStarted = false; // remove this later
         // wait for response
+        setTimeout(function(
 
+        ){}, (SHORT_INTERVAL + LONG_INTERVAL) * currentStep)
         // fill response array
         // check response array element against corresponding element in sequence array
         // if wrong, indicate error
         // start sequence again from beginning
         // if correct increment currentStep and play sequence again
-      }
-
-
-      //setTimeout(this.aiTurn, SHORT_INTERVAL);
-    };
-
-
-
-
-
-
-    this.displayMoves = function() {
-      var i = 0;
-      l = this.gameArr.length;
-      (function loop() {
-        console.log("this.gameArr[i]:", this.gameArr[i],'i:', i);
-        this.lightUp(this.gameArr[i]);
-        if (++i < l) {
-          setTimeout(loop, SHORT_INTERVAL);
-        } else {
-            this.playerOn();
-        }
-      })(); // loop called immediately to start it off
-
-    };
-    this.playerOn = function() {
-      console.log('****** playerOn()')
-      this.playerTurn = true;
-      console.log("this.playerTurn:", this.playerTurn);
-      this.playerArr = [];
-      startTiming();
-    }
-    this.playerOff = function() {
-      console.log("playerOff!");
-      this.playerTurn = false;
-      console.log('this.playerTurn:', this.playerTurn);
-    }
-    this.aiTurn = function() {
-      console.log("******* this.AiTurn()");
-      for (i=0; i<currentStep; i++) {
-        console.log('showing a colour')
-      }
-    }
-    this.makePlayerMove = function(colour) {
-      console.log("******makePlayerMove(),currentStep:", this.currentStep);
-      this.playerArr.push(colour)
-      console.log('this.playerArr:',this.playerArr)
-      this.playerMoves++;
-      console.log('this.playerMoves:', this.playerMoves);
-      if (this.playerMoves == this.currentStep) {
-        this.compare();
-      }
-    }
-    this.compare = function() {
-      console.log('*******compare()')
-      for (let i=0; i<this.currentStep; i++) {
-        if (this.gameArr[i] == this.playerArr[i]) {
-          console.log('i:',i, 'is same');
-        } else {
-          console.log("i", i, "is different");
-          console.log("start again");
-          this.playerTurn = false;
-          if (strictOn) {
-            this.reset();
-            this.start();
-          } else {
-            console.log('replay moves');
-            // REPLAY MOVES
-            setTimeout(this.displayMoves, SHORT_INTERVAL);
-          }
-          return;
-        }
-      }
-      this.aiTurn();
-    }
+        currentStep++
+      } // end while
+    }; // end start()
   }; // end Game class
 
   /* DO We need this?
@@ -235,7 +199,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function ranOutOfTime() {
     clearTimeout(timer)
     timer = setTimeout(function() {
-      if (game.playerArr.length < game.gameArr.length) {
+      if (game.playerArr.length < game.sequence.length) {
         console.log("ranOutOfTime returning true");
         return true;
       }
@@ -261,11 +225,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (this.currentStep >= 0 && this.currentStep < 20) {
       var rand = this.random();
       console.log("rand from addToSequence", rand);
-      this.gameArr.push(WEDGES[rand]);
+      this.sequence.push(WEDGES[rand]);
       this.currentStep++;
       console.log("currentStep", this.currentStep);
-      console.log("gameArr length", this.gameArr.length);
-      console.log("gameArr", this.gameArr);
+      console.log("sequence length", this.sequence.length);
+      console.log("sequence", this.sequence);
     }
     this.displayMoves();
   };
