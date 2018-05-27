@@ -28,7 +28,8 @@ document.addEventListener("DOMContentLoaded", function () {
     strictOn = false;
 
   /* global variables */
-  var timeInterval = 1500;
+  var SHORT_INTERVAL = 1500;
+  var LONG_INTERVAL = SHORT_INTERVAL * 1.5;
   const WEDGES = ['green', 'red', 'blue', 'yellow'];
   const MOVES = 20;
 
@@ -81,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
     playerArr = [],
     currentStep = 1,
     playerMoves = 0,
-    timeListen = timeInterval * this.currentStep,
+    timeListen = SHORT_INTERVAL * this.currentStep,
     /** Generates a random number between 0 and 3.*/
     randomColourIndex = function() {
       return Math.floor(Math.random() * 3);
@@ -113,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
       setTimeout(function () {
         wedge.classList.add('dark');
         wedge.classList.remove('light');
-      }, timeInterval);
+      }, SHORT_INTERVAL);
     },
     playSequence = function() {
       console.log(currentStep);
@@ -122,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
         lightUp(sequence[i]);
         i++;
         if (i < currentStep) {
-          setTimeout(lightSequence, timeInterval*2)
+          setTimeout(lightSequence, LONG_INTERVAL)
         }
       }
       lightSequence();
@@ -150,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
 
-      //setTimeout(this.aiTurn, timeInterval);
+      //setTimeout(this.aiTurn, SHORT_INTERVAL);
     };
 
 
@@ -165,7 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("this.gameArr[i]:", this.gameArr[i],'i:', i);
         this.lightUp(this.gameArr[i]);
         if (++i < l) {
-          setTimeout(loop, timeInterval);
+          setTimeout(loop, SHORT_INTERVAL);
         } else {
             this.playerOn();
         }
@@ -215,7 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
           } else {
             console.log('replay moves');
             // REPLAY MOVES
-            setTimeout(this.displayMoves, timeInterval);
+            setTimeout(this.displayMoves, SHORT_INTERVAL);
           }
           return;
         }
