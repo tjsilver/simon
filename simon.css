@@ -165,6 +165,14 @@ button.pressed {
   border-right: 1px solid black;
 }
 
+button.closed {
+  pointer-events: none;
+}
+
+button.open {
+  pointer-events: auto;
+}
+
 #start {
   top: 120px;
   left: 20px;
