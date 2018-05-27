@@ -23,11 +23,14 @@ document.addEventListener("DOMContentLoaded", function () {
   var start = document.getElementById('start'),
     strict = document.getElementById('strict'),
     strictIndicator = document.getElementById('strict-indicator'),
+
+
     strictOn = false;
 
   /* global variables */
   var timeInterval = 1500;
   const WEDGES = ['green', 'red', 'blue', 'yellow'];
+  const MOVES = 20;
 
   /* set listeners */
   start.addEventListener('click', startPress, false);
@@ -71,27 +74,38 @@ document.addEventListener("DOMContentLoaded", function () {
    * @constructor
    */
   function Game() {
-    // private
+    /* private */
     var gameStarted = false,
     playerTurn = false,
     gameArr = [],
     playerArr = [],
-    numSteps = 0,
+    currentStep = 1,
     playerMoves = 0,
-    timeListen = timeInterval * this.numSteps;
-    var reset = function() {
-      console.log("Game reset");
-      gameArr = [];
-      playerArr = [];
-      numSteps = 0;
-      return true;
-    };
-    var random = function() {
-      //generate a random number between 0 and 3;
+    timeListen = timeInterval * this.currentStep,
+    /** Generates a random number between 0 and 3.*/
+    randomColourIndex = function() {
       return Math.floor(Math.random() * 3);
-    };
-    // public
-    this.lightUp = function(colour) {
+    },
+    /** Returns an array with random numbers between 0 and 3.*/
+    fillSequence = function() {
+      arr = []
+      for (i=0; i<MOVES; i++) {
+        arr.push(WEDGES[randomColourIndex()]);
+      }
+      console.log('sequence', arr)
+      return arr;
+    },
+    /** Resets the game.*/
+    reset = function() {
+      console.log("Game reset");
+      gameStarted = false;
+      sequence = fillSequence();
+      playerArr = [];
+      currentStep = 1;
+      return true;
+    },
+    /** Lights up a wedge for a period of time. */
+    lightUp = function(colour) {
       console.log("*******lightUp() colour: ", colour);
       var wedge = document.getElementById(colour);
       wedge.classList.add('light');
@@ -100,25 +114,50 @@ document.addEventListener("DOMContentLoaded", function () {
         wedge.classList.add('dark');
         wedge.classList.remove('light');
       }, timeInterval);
-    };
-    this.start = function() {
-      console.log("&&&&&&&& game.start()");
-      this.gameStarted = true;
-      setTimeout(this.aiTurn, timeInterval);
-    };
-    this.addToSequence = function() {
-      console.log("*********game.addToSequence()")
-      if (this.numSteps >= 0 && this.numSteps < 20) {
-        var rand = this.random();
-        console.log("rand from addToSequence", rand);
-        this.gameArr.push(WEDGES[rand]);
-        this.numSteps++;
-        console.log("numSteps", this.numSteps);
-        console.log("gameArr length", this.gameArr.length);
-        console.log("gameArr", this.gameArr);
+    },
+    playSequence = function() {
+      console.log(currentStep);
+      var i = 0;
+      function lightSequence() {
+        lightUp(sequence[i]);
+        i++;
+        if (i < currentStep) {
+          setTimeout(lightSequence, timeInterval)
+        }
       }
-      this.displayMoves();
+      lightSequence();
     };
+
+
+    /* public functions */
+    this.start = function() {
+      console.log("****** new Game started");
+      reset();
+      gameStarted = true;
+      // set number of steps to 1
+      currentStep = 5;
+      while (gameStarted) {
+        // play sequence up to currentStep
+        playSequence();
+        gameStarted = false; // remove this later
+        // wait for response
+
+        // fill response array
+        // check response array element against corresponding element in sequence array
+        // if wrong, indicate error
+        // start sequence again from beginning
+        // if correct increment currentStep and play sequence again
+      }
+
+
+      //setTimeout(this.aiTurn, timeInterval);
+    };
+
+
+
+
+
+
     this.displayMoves = function() {
       var i = 0;
       l = this.gameArr.length;
@@ -139,29 +178,31 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log("this.playerTurn:", this.playerTurn);
       this.playerArr = [];
       startTiming();
-    };
+    }
     this.playerOff = function() {
       console.log("playerOff!");
       this.playerTurn = false;
       console.log('this.playerTurn:', this.playerTurn);
-    };
+    }
     this.aiTurn = function() {
       console.log("******* this.AiTurn()");
-      this.addToSequence();
-    };
+      for (i=0; i<currentStep; i++) {
+        console.log('showing a colour')
+      }
+    }
     this.makePlayerMove = function(colour) {
-      console.log("******makePlayerMove(),numSteps:", this.numSteps);
+      console.log("******makePlayerMove(),currentStep:", this.currentStep);
       this.playerArr.push(colour)
       console.log('this.playerArr:',this.playerArr)
       this.playerMoves++;
       console.log('this.playerMoves:', this.playerMoves);
-      if (this.playerMoves == this.numSteps) {
+      if (this.playerMoves == this.currentStep) {
         this.compare();
       }
-    };
+    }
     this.compare = function() {
       console.log('*******compare()')
-      for (let i=0; i<this.numSteps; i++) {
+      for (let i=0; i<this.currentStep; i++) {
         if (this.gameArr[i] == this.playerArr[i]) {
           console.log('i:',i, 'is same');
         } else {
@@ -180,15 +221,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
       this.aiTurn();
-    };
+    }
   }; // end Game class
 
-
+  /* DO We need this?
   function startTiming() {
     console.log('-------startTiming()');
     // TODO: MAKE THIS WORK WITH ranOutOfTime!!
   };
-
+  */
   var timer;
   function ranOutOfTime() {
     clearTimeout(timer)
@@ -206,12 +247,27 @@ document.addEventListener("DOMContentLoaded", function () {
     var w = e.target.id;
     console.log("wedgeClick():", w, 'was clicked');
     console.log("game.playerTurn is ", game.playerTurn)
-    if (game.playerTurn == true && game.playerArr.length < game.numSteps) {
+    if (game.playerTurn == true && game.playerArr.length < game.currentStep) {
       game.makePlayerMove(w);
     } else {
       console.log('now turn for AI again');
     }
   }
 
+  /** TODO: DELETE?
+  this.addToSequence = function() {
+    console.log("*********game.addToSequence()")
+    if (this.currentStep >= 0 && this.currentStep < 20) {
+      var rand = this.random();
+      console.log("rand from addToSequence", rand);
+      this.gameArr.push(WEDGES[rand]);
+      this.currentStep++;
+      console.log("currentStep", this.currentStep);
+      console.log("gameArr length", this.gameArr.length);
+      console.log("gameArr", this.gameArr);
+    }
+    this.displayMoves();
+  };
+  */
 
 }); // end DOMContentLoaded
