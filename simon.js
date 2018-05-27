@@ -21,8 +21,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /* buttons */
   var start = document.getElementById('start'),
-  strict = document.getElementById('strict'),
-  strictIndicator = document.getElementById('strict-indicator'), strictOn = false;
+    strict = document.getElementById('strict'),
+    strictIndicator = document.getElementById('strict-indicator'),
+    strictOn = false;
 
   /* global variables */
   var timeInterval = 1500;
@@ -65,7 +66,10 @@ document.addEventListener("DOMContentLoaded", function () {
     newgame = new Game();
     newgame.start()
   }
-  /* game */
+  /**
+  * Represents a game of Simon.
+  * @constructor
+  */
   function Game() {
     // private
     var gameStarted = false,
@@ -82,11 +86,11 @@ document.addEventListener("DOMContentLoaded", function () {
       numSteps = 0;
       return true;
     };
-    this.random = function() {
+    var random = function() {
       //generate a random number between 0 and 3;
       return Math.floor(Math.random() * 3);
-    }
     };
+    // public
     this.lightUp = function(colour) {
       console.log("*******lightUp() colour: ", colour);
       var wedge = document.getElementById(colour);
