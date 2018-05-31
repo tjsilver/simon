@@ -37,13 +37,6 @@ document.addEventListener("DOMContentLoaded", function () {
   start.addEventListener('click', startPress, false);
   strict.addEventListener('click', useStrict, false);
   
-  function openWedges() {
-	for (let i = 0; i < WEDGES.length; i++) {
-		document.getElementById(WEDGES[i]).classList.remove('closed');
-		document.getElementById(WEDGES[i]).classList.add('open');
-		document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
-	}
-  }
   /* button presses */
   function buttonDown(el) {
     el.classList.add('pressed');
@@ -88,6 +81,14 @@ document.addEventListener("DOMContentLoaded", function () {
     currentStep = 1,
     playerMoves = 0,
     timeListen = SHORT_INTERVAL * currentStep,
+	/** Turns on listeners for wedges. */
+	openWedges = function() {
+	  for (let i = 0; i < WEDGES.length; i++) {
+		document.getElementById(WEDGES[i]).classList.remove('closed');
+		document.getElementById(WEDGES[i]).classList.add('open');
+		document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
+	  }
+	},
     /** Generates a random number between 0 and 3.*/
     randomColourIndex = function() {
       return Math.floor(Math.random() * 3);
@@ -141,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
     /** Listens for user clicking on coloured buttons.*/
     wedgeClick = function(e) {
       var buttonColour = e.target.id;
-      console.log("wedgeClick():", w, 'was clicked');
+      console.log("wedgeClick():", buttonColour, 'was clicked');
       reactToClick(buttonColour);
     },
     /** Plays a game of Simon */
@@ -177,11 +178,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       } // end while
   }, // end playGame
+  /*
     aiTurn = function() {
       console.log("******* this.AiTurn()");
       // what are we doing here?
-    },
+    }, */ //GET RID OF THIS?
     makePlayerMove = function(colour) {
+	  openWedges();
       console.log("******makePlayerMove(),currentStep:", currentStep);
       playerArr.push(colour);
       console.log('this.playerArr:',playerArr);
@@ -198,7 +201,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
       // do we need this?
-      aiTurn();
+      //aiTurn();
     };
     /* public functions */
     this.start = function() {
@@ -221,11 +224,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }, game.timeListen);
   }; // end ranOutOfTime */
 
+  /*
   function wedgeClick(e) {
     var w = e.target.id;
     console.log("wedgeClick():", w, 'was clicked');
 
-  }
+  }*/ //TODO: DElETE?
 
   /** TODO: DELETE?
   this.addToSequence = function() {
