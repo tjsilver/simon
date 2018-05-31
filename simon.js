@@ -17,21 +17,19 @@ User Story: I can play in strict mode where if I get a button press wrong, it no
 User Story: I can win the game by getting a series of 20 steps correct. I am notified of my victory, then the game starts over.
 */
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener('DOMContentLoaded', function() {
 
   /* buttons */
   var start = document.getElementById('start'),
     strict = document.getElementById('strict'),
     strictIndicator = document.getElementById('strict-indicator'),
-
-
     strictOn = false;
 
   /* global variables */
-  const SHORT_INTERVAL = 1500;
-  const LONG_INTERVAL = SHORT_INTERVAL * 1.5;
-  const WEDGES = ['green', 'red', 'blue', 'yellow'];
-  const MOVES = 20;
+  const SHORT_INTERVAL = 1500,
+    LONG_INTERVAL = SHORT_INTERVAL * 1.5,
+    WEDGES = ['green', 'red', 'blue', 'yellow'],
+    MOVES = 20;
 
   /* set listeners */
   start.addEventListener('click', startPress, false);
@@ -41,6 +39,7 @@ document.addEventListener("DOMContentLoaded", function() {
   function buttonDown(el) {
     el.classList.add('pressed');
   }
+
   function buttonUp(el) {
     el.classList.remove('pressed');
   }
@@ -56,12 +55,12 @@ document.addEventListener("DOMContentLoaded", function() {
       strictIndicator.classList.remove('on');
       strictOn = false;
     }
-    console.log("strict status", strictOn);
+    console.log('strict status', strictOn);
   }
 
   /** Initiates a game. */
   function startPress() {
-    console.log("*******startPress");
+    console.log('startPress');
     buttonDown(start);
     //timer then buttonup
     setTimeout(function() {
@@ -80,11 +79,9 @@ document.addEventListener("DOMContentLoaded", function() {
       playerTurn = false,
       sequence = [],
       playerArr = [],
-      currentStep = 1,
-      playerMoves = 0,
-      timeListen = SHORT_INTERVAL * currentStep,
       /** Turns on listeners for wedges. */
       openWedges = function() {
+        console.log('openWedges()')
         for (let i = 0; i < WEDGES.length; i++) {
           document.getElementById(WEDGES[i]).classList.remove('closed');
           document.getElementById(WEDGES[i]).classList.add('open');
@@ -93,10 +90,11 @@ document.addEventListener("DOMContentLoaded", function() {
       },
       /** Turns off listeners for wedges. */
       closeWedges = function() {
+        console.log('closeWedges()')
         for (let i = 0; i < WEDGES.length; i++) {
           document.getElementById(WEDGES[i]).classList.remove('open');
           document.getElementById(WEDGES[i]).classList.add('closed');
-          document.getElementById(WEDGES[i]).removeEventListener('click',wedgeClick, false);
+          document.getElementById(WEDGES[i]).removeEventListener('click', wedgeClick, false);
         }
       },
       /** Generates a random number between 0 and 3.*/
@@ -114,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function() {
       },
       /** Resets the game.*/
       gameReset = function() {
-        console.log("Game gameReset");
+        console.log('Game gameReset');
         gameStarted = false;
         sequence = fillSequence();
         playerArr = [];
@@ -132,9 +130,9 @@ document.addEventListener("DOMContentLoaded", function() {
       },
       /** Plays a sequence of coloured buttons */
       playSequence = function(numSteps) {
-        closeWedges();
-        console.log('numSteps', numSteps);
+        console.log('playSequence(), numSteps', numSteps);
         let i = 0;
+
         function lightSequence() {
           lightUp(sequence[i]);
           i++;
@@ -147,111 +145,56 @@ document.addEventListener("DOMContentLoaded", function() {
         var aiWait = LONG_INTERVAL * currentStep;
         setTimeout(function() {
           playerTurn = true;
+          openWedges();
           console.log('playerTurn is true?', playerTurn)
-          makePlayerMove();
+          return playerTurn;
         }, aiWait)
       },
-      /** Reacts to clicks of the buttons, if it's the player's turn.*/
-      reactToClick = function(buttonColour) {
-        if (playerTurn) {
-          playerArr.push(buttonColour)
-        }
-      },
-      /** Listens for user clicking on coloured buttons.*/
       wedgeClick = function(e) {
         var buttonColour = e.target.id;
-        console.log("wedgeClick():", buttonColour, 'was clicked');
-        reactToClick(buttonColour);
+        console.log('wedgeClick():', buttonColour, 'was clicked', 'playerArr', playerArr, 'playerTurn', playerTurn);
+        var playerArrLength = playerArr.length;
+        if (playerTurn && playerArrLength <= currentStep) {
+          playerArr.push(buttonColour);
+          compareSequence(playerArrLength);
+        } else {
+          closeWedges();
+          playerTurn == false;
+        }
+      },
+      compareSequence = function(numClicks) {
+        console.log('compareSequence', playerArr, sequence, 'numClicks', numClicks);
+        for (let i = 0; i < currentStep; i++) {
+          if (playerArr[i] != sequence[i]) {
+            return false;
+          }
+        }
+        return true;
       },
       /** Plays a game of Simon */
       playGame = function() {
+        playerArr = []
         gameStarted = true;
         // set number of steps to 1
-        currentStep = 0;
-        while (gameStarted) {
-          currentStep++;
+        currentStep = 1;
+        // play sequence up to currentStep
+        for (let i = 0; i < MOVES; i++) {
           // play sequence up to currentStep
           playSequence(currentStep);
-
-          // wait for response
-          var playerWait = LONG_INTERVAL * currentStep * 2;
-          setTimeout(function() {
-            playerTurn = false;
-            console.log('playerTurn is false?', playerTurn)
-          }, playerWait)
-          // check response array element against corresponding element in sequence array
-          // if wrong, indicate error
-          // start sequence again from beginning
-          // if correct increment currentStep and play sequence again
-
-          if (currentStep == MOVES) {
-            gameStarted = false;
-          }
-        } // end while
-      }, // end playGame
-
-      makePlayerMove = function(colour) {
-        openWedges();
-        console.log("******makePlayerMove(),currentStep:", currentStep);
-        playerArr.push(colour);
-        console.log('this.playerArr:', playerArr);
-        playerMoves++;
-        console.log('this.playerMoves:', playerMoves);
-        if (playerMoves == currentStep) {
-          compare();
+          // test whole player array for correctness
+          // if wrong: make currentStep = 1
+          // else: add another step and play sequence again
         }
-      },
-      compare = function() {
-        // compare current click colour to array
-        // if it's right, continue
-        // if it's wrong, restart sequence
-
-
-        // do we need this?
-        //aiTurn();
-      };
+        // end game
+        if (currentStep == MOVES) {
+          gameStarted = false;
+        }
+      }; // end playGame
     /* public functions */
     this.start = function() {
-      console.log("****** new Game started");
+      console.log('****** new Game started');
       gameReset();
       playGame();
     }; // end start()
   }; // end Game class
-
-  /*var timer;
-  function ranOutOfTime() {
-    clearTimeout(timer)
-    timer = setTimeout(function() {
-      if (game.playerArr.length < game.sequence.length) {
-        console.log("ranOutOfTime returning true");
-        return true;
-      }
-      console.log("ranOutOfTime returning false");
-      return false;
-    }, game.timeListen);
-  }; // end ranOutOfTime */
-
-  /*
-  function wedgeClick(e) {
-    var w = e.target.id;
-    console.log("wedgeClick():", w, 'was clicked');
-
-  }*/ //TODO: DElETE?
-
-  /** TODO: DELETE?
-  this.addToSequence = function() {
-    console.log("*********game.addToSequence()")
-    if (this.currentStep >= 0 && this.currentStep < 20) {
-      var rand = this.random();
-      console.log("rand from addToSequence", rand);
-      this.sequence.push(WEDGES[rand]);
-      this.currentStep++;
-      console.log("currentStep", this.currentStep);
-      console.log("sequence length", this.sequence.length);
-      console.log("sequence", this.sequence);
-    }
-    this.displayMoves();
-  };
-  */
-
 }); // end DOMContentLoaded
