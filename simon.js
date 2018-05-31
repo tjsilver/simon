@@ -36,8 +36,13 @@ document.addEventListener("DOMContentLoaded", function () {
   /* set listeners */
   start.addEventListener('click', startPress, false);
   strict.addEventListener('click', useStrict, false);
-  for (let i = 0; i < WEDGES.length; i++) {
-    document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
+  
+  openWedges() {
+	for (let i = 0; i < WEDGES.length; i++) {
+		document.getElementById(WEDGES[i]).classList.remove('closed');
+		document.getElementById(WEDGES[i]).classList.add('open');
+		document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
+	}
   }
   /* button presses */
   function buttonDown(el) {
@@ -102,7 +107,6 @@ document.addEventListener("DOMContentLoaded", function () {
       gameStarted = false;
       sequence = fillSequence();
       playerArr = [];
-      currentStep = 1;
       return true;
     },
     /** Lights up a wedge for a period of time. */
@@ -116,13 +120,13 @@ document.addEventListener("DOMContentLoaded", function () {
       }, SHORT_INTERVAL);
     },
     /** Plays a sequence of coloured buttons */
-    playSequence = function() {
-      console.log(currentStep);
+    playSequence = function(numSteps) {
+      console.log('numSteps',numSteps);
       var i = 0;
       function lightSequence() {
         lightUp(sequence[i]);
         i++;
-        if (i < currentStep) {
+        if (i < numSteps) {
           setTimeout(lightSequence, LONG_INTERVAL)
         }
       }
@@ -144,16 +148,18 @@ document.addEventListener("DOMContentLoaded", function () {
     playGame = function() {
       gameStarted = true;
       // set number of steps to 1
-      currentStep = 5;
+      currentStep = 0;
       while (gameStarted) {
+		currentStep++;
         // play sequence up to currentStep
-        playSequence();
+        playSequence(currentStep);
         gameStarted = false; // remove this later
         // wait for sequence to play
         var aiWait = LONG_INTERVAL * currentStep; 
         setTimeout(function() {
             playerTurn = true;
             console.log('playerTurn is true?', playerTurn)
+			makePlayerMove();
         }, aiWait)
         // wait for response
         var playerWait = LONG_INTERVAL * currentStep * 2;
@@ -165,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // if wrong, indicate error
         // start sequence again from beginning
         // if correct increment currentStep and play sequence again
-        currentStep++;
+        
         if (currentStep == MOVES) {
           gameStarted = false;
         }
@@ -177,8 +183,8 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     makePlayerMove = function(colour) {
       console.log("******makePlayerMove(),currentStep:", currentStep);
-      playerArr.push(colour)
-      console.log('this.playerArr:',playerArr)
+      playerArr.push(colour);
+      console.log('this.playerArr:',playerArr);
       playerMoves++;
       console.log('this.playerMoves:', playerMoves);
       if (playerMoves == currentStep) {
@@ -202,13 +208,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }; // end start()
   }; // end Game class
 
-  /* DO We need this?
-  function startTiming() {
-    console.log('-------startTiming()');
-    // TODO: MAKE THIS WORK WITH ranOutOfTime!!
-  };
-  */
-  var timer;
+  /*var timer;
   function ranOutOfTime() {
     clearTimeout(timer)
     timer = setTimeout(function() {
@@ -219,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log("ranOutOfTime returning false");
       return false;
     }, game.timeListen);
-  }; // end ranOutOfTime
+  }; // end ranOutOfTime */
 
   function wedgeClick(e) {
     var w = e.target.id;
