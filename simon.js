@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
   start.addEventListener('click', startPress, false);
   strict.addEventListener('click', useStrict, false);
   
-  openWedges() {
+  function openWedges() {
 	for (let i = 0; i < WEDGES.length; i++) {
 		document.getElementById(WEDGES[i]).classList.remove('closed');
 		document.getElementById(WEDGES[i]).classList.add('open');
