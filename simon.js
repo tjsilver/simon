@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function() {
         for (let i = 0; i < WEDGES.length; i++) {
           document.getElementById(WEDGES[i]).classList.remove('closed');
           document.getElementById(WEDGES[i]).classList.add('open');
-          document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick);
+          document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
         }
       },
       /** Turns off listeners for wedges. */
@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function() {
         for (let i = 0; i < WEDGES.length; i++) {
           document.getElementById(WEDGES[i]).classList.remove('open');
           document.getElementById(WEDGES[i]).classList.add('closed');
-          document.getElementById(WEDGES[i]).removeEventListener('click');
+          document.getElementById(WEDGES[i]).removeEventListener('click',wedgeClick, false);
         }
       },
       /** Generates a random number between 0 and 3.*/
@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         lightSequence();
       },
-      /** Reacts to clicks of the buttons, depending on whether it's the player's turn.*/
+      /** Reacts to clicks of the buttons, if it's the player's turn.*/
       reactToClick = function(buttonColour) {
         if (playerTurn) {
           playerArr.push(buttonColour)
