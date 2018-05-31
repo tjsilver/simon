@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
     //timer then buttonup
     setTimeout(function () {
       buttonUp(start);
-    }, 500);
+    }, 250);
     newgame = new Game();
     newgame.start()
   }
