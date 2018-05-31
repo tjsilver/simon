@@ -143,6 +143,13 @@ document.addEventListener("DOMContentLoaded", function() {
           }
         }
         lightSequence();
+        // wait for sequence to play
+        var aiWait = LONG_INTERVAL * currentStep;
+        setTimeout(function() {
+          playerTurn = true;
+          console.log('playerTurn is true?', playerTurn)
+          makePlayerMove();
+        }, aiWait)
       },
       /** Reacts to clicks of the buttons, if it's the player's turn.*/
       reactToClick = function(buttonColour) {
@@ -165,13 +172,7 @@ document.addEventListener("DOMContentLoaded", function() {
           currentStep++;
           // play sequence up to currentStep
           playSequence(currentStep);
-          // wait for sequence to play
-          var aiWait = LONG_INTERVAL * currentStep;
-          setTimeout(function() {
-            playerTurn = true;
-            console.log('playerTurn is true?', playerTurn)
-            makePlayerMove();
-          }, aiWait)
+
           // wait for response
           var playerWait = LONG_INTERVAL * currentStep * 2;
           setTimeout(function() {
