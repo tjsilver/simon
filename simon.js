@@ -84,16 +84,18 @@ document.addEventListener("DOMContentLoaded", function () {
 	/** Turns on listeners for wedges. */
 	openWedges = function() {
 	  for (let i = 0; i < WEDGES.length; i++) {
-		document.getElementById(WEDGES[i]).classList.remove('closed');
-		document.getElementById(WEDGES[i]).classList.add('open');
-		document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
+  		document.getElementById(WEDGES[i]).classList.remove('closed');
+  		document.getElementById(WEDGES[i]).classList.add('open');
+  		document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
 	  }
 	},
   /** Turns off listeners for wedges. */
   closeWedges = function () {
-    document.getElementById(WEDGES[i]).classList.remove('open');
-    document.getElementById(WEDGES[i]).classList.add('closed');
-		document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
+    for (let i = 0; i < WEDGES.length; i++) {
+      document.getElementById(WEDGES[i]).classList.remove('open');
+      document.getElementById(WEDGES[i]).classList.add('closed');
+  		document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
+    }
   }
     /** Generates a random number between 0 and 3.*/
     randomColourIndex = function() {
@@ -128,6 +130,7 @@ document.addEventListener("DOMContentLoaded", function () {
     },
     /** Plays a sequence of coloured buttons */
     playSequence = function(numSteps) {
+      closeWedges();
       console.log('numSteps',numSteps);
       var i = 0;
       function lightSequence() {
@@ -157,16 +160,15 @@ document.addEventListener("DOMContentLoaded", function () {
       // set number of steps to 1
       currentStep = 0;
       while (gameStarted) {
-		currentStep++;
+		    currentStep++;
         // play sequence up to currentStep
         playSequence(currentStep);
-        gameStarted = false; // remove this later
         // wait for sequence to play
         var aiWait = LONG_INTERVAL * currentStep;
         setTimeout(function() {
             playerTurn = true;
             console.log('playerTurn is true?', playerTurn)
-			makePlayerMove();
+			      makePlayerMove();
         }, aiWait)
         // wait for response
         var playerWait = LONG_INTERVAL * currentStep * 2;
@@ -190,7 +192,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // what are we doing here?
     }, */ //GET RID OF THIS?
     makePlayerMove = function(colour) {
-	  openWedges();
+	    openWedges();
       console.log("******makePlayerMove(),currentStep:", currentStep);
       playerArr.push(colour);
       console.log('this.playerArr:',playerArr);
