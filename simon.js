@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
   /* set listeners */
   start.addEventListener('click', startPress, false);
   strict.addEventListener('click', useStrict, false);
-  
+
   /* button presses */
   function buttonDown(el) {
     el.classList.add('pressed');
@@ -89,6 +89,12 @@ document.addEventListener("DOMContentLoaded", function () {
 		document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
 	  }
 	},
+  /** Turns off listeners for wedges. */
+  closeWedges = function () {
+    document.getElementById(WEDGES[i]).classList.remove('open');
+    document.getElementById(WEDGES[i]).classList.add('closed');
+		document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
+  }
     /** Generates a random number between 0 and 3.*/
     randomColourIndex = function() {
       return Math.floor(Math.random() * 3);
@@ -156,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
         playSequence(currentStep);
         gameStarted = false; // remove this later
         // wait for sequence to play
-        var aiWait = LONG_INTERVAL * currentStep; 
+        var aiWait = LONG_INTERVAL * currentStep;
         setTimeout(function() {
             playerTurn = true;
             console.log('playerTurn is true?', playerTurn)
@@ -172,7 +178,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // if wrong, indicate error
         // start sequence again from beginning
         // if correct increment currentStep and play sequence again
-        
+
         if (currentStep == MOVES) {
           gameStarted = false;
         }
