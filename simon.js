@@ -17,7 +17,7 @@ User Story: I can play in strict mode where if I get a button press wrong, it no
 User Story: I can win the game by getting a series of 20 steps correct. I am notified of my victory, then the game starts over.
 */
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
 
   /* buttons */
   var start = document.getElementById('start'),
@@ -44,6 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function buttonUp(el) {
     el.classList.remove('pressed');
   }
+
   /* strict mode */
   function useStrict() {
     if (!strictOn) {
@@ -57,12 +58,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     console.log("strict status", strictOn);
   }
-  /* start game */
+
+  /** Initiates a game. */
   function startPress() {
     console.log("*******startPress");
     buttonDown(start);
     //timer then buttonup
-    setTimeout(function () {
+    setTimeout(function() {
       buttonUp(start);
     }, 250);
     newgame = new Game();
@@ -75,142 +77,138 @@ document.addEventListener("DOMContentLoaded", function () {
   function Game() {
     /* private */
     var gameStarted = false,
-    playerTurn = false,
-    sequence = [],
-    playerArr = [],
-    currentStep = 1,
-    playerMoves = 0,
-    timeListen = SHORT_INTERVAL * currentStep,
-	/** Turns on listeners for wedges. */
-	openWedges = function() {
-	  for (let i = 0; i < WEDGES.length; i++) {
-  		document.getElementById(WEDGES[i]).classList.remove('closed');
-  		document.getElementById(WEDGES[i]).classList.add('open');
-  		document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
-	  }
-	},
-  /** Turns off listeners for wedges. */
-  closeWedges = function () {
-    for (let i = 0; i < WEDGES.length; i++) {
-      document.getElementById(WEDGES[i]).classList.remove('open');
-      document.getElementById(WEDGES[i]).classList.add('closed');
-  		document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
-    }
-  }
-    /** Generates a random number between 0 and 3.*/
-    randomColourIndex = function() {
-      return Math.floor(Math.random() * 3);
-    },
-    /** Returns an array with random numbers between 0 and 3.*/
-    fillSequence = function() {
-      arr = []
-      for (i=0; i<MOVES; i++) {
-        arr.push(WEDGES[randomColourIndex()]);
-      }
-      console.log('sequence', arr)
-      return arr;
-    },
-    /** Resets the game.*/
-    gameReset = function() {
-      console.log("Game gameReset");
-      gameStarted = false;
-      sequence = fillSequence();
-      playerArr = [];
-      return true;
-    },
-    /** Lights up a wedge for a period of time. */
-    lightUp = function(colour) {
-      var wedge = document.getElementById(colour);
-      wedge.classList.add('light');
-      wedge.classList.remove('dark');
-      setTimeout(function () {
-        wedge.classList.add('dark');
-        wedge.classList.remove('light');
-      }, SHORT_INTERVAL);
-    },
-    /** Plays a sequence of coloured buttons */
-    playSequence = function(numSteps) {
-      closeWedges();
-      console.log('numSteps',numSteps);
-      var i = 0;
-      function lightSequence() {
-        lightUp(sequence[i]);
-        i++;
-        if (i < numSteps) {
-          setTimeout(lightSequence, LONG_INTERVAL)
+      playerTurn = false,
+      sequence = [],
+      playerArr = [],
+      currentStep = 1,
+      playerMoves = 0,
+      timeListen = SHORT_INTERVAL * currentStep,
+      /** Turns on listeners for wedges. */
+      openWedges = function() {
+        for (let i = 0; i < WEDGES.length; i++) {
+          document.getElementById(WEDGES[i]).classList.remove('closed');
+          document.getElementById(WEDGES[i]).classList.add('open');
+          document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick);
         }
-      }
-      lightSequence();
-    },
-    /** Reacts to clicks of the buttons, depending on whether it's the player's turn.*/
-    reactToClick = function(buttonColour) {
-      if (playerTurn) {
-        playerArr.push(buttonColour)
-      }
-    },
-    /** Listens for user clicking on coloured buttons.*/
-    wedgeClick = function(e) {
-      var buttonColour = e.target.id;
-      console.log("wedgeClick():", buttonColour, 'was clicked');
-      reactToClick(buttonColour);
-    },
-    /** Plays a game of Simon */
-    playGame = function() {
-      gameStarted = true;
-      // set number of steps to 1
-      currentStep = 0;
-      while (gameStarted) {
-		    currentStep++;
-        // play sequence up to currentStep
-        playSequence(currentStep);
-        // wait for sequence to play
-        var aiWait = LONG_INTERVAL * currentStep;
+      },
+      /** Turns off listeners for wedges. */
+      closeWedges = function() {
+        for (let i = 0; i < WEDGES.length; i++) {
+          document.getElementById(WEDGES[i]).classList.remove('open');
+          document.getElementById(WEDGES[i]).classList.add('closed');
+          document.getElementById(WEDGES[i]).removeEventListener('click');
+        }
+      },
+      /** Generates a random number between 0 and 3.*/
+      randomColourIndex = function() {
+        return Math.floor(Math.random() * 3);
+      },
+      /** Returns an array with random numbers between 0 and 3.*/
+      fillSequence = function() {
+        arr = []
+        for (i = 0; i < MOVES; i++) {
+          arr.push(WEDGES[randomColourIndex()]);
+        }
+        console.log('sequence', arr)
+        return arr;
+      },
+      /** Resets the game.*/
+      gameReset = function() {
+        console.log("Game gameReset");
+        gameStarted = false;
+        sequence = fillSequence();
+        playerArr = [];
+        return true;
+      },
+      /** Lights up a wedge for a period of time. */
+      lightUp = function(colour) {
+        var wedge = document.getElementById(colour);
+        wedge.classList.add('light');
+        wedge.classList.remove('dark');
         setTimeout(function() {
+          wedge.classList.add('dark');
+          wedge.classList.remove('light');
+        }, SHORT_INTERVAL);
+      },
+      /** Plays a sequence of coloured buttons */
+      playSequence = function(numSteps) {
+        closeWedges();
+        console.log('numSteps', numSteps);
+        let i = 0;
+        function lightSequence() {
+          lightUp(sequence[i]);
+          i++;
+          if (i < numSteps) {
+            setTimeout(lightSequence, LONG_INTERVAL)
+          }
+        }
+        lightSequence();
+      },
+      /** Reacts to clicks of the buttons, depending on whether it's the player's turn.*/
+      reactToClick = function(buttonColour) {
+        if (playerTurn) {
+          playerArr.push(buttonColour)
+        }
+      },
+      /** Listens for user clicking on coloured buttons.*/
+      wedgeClick = function(e) {
+        var buttonColour = e.target.id;
+        console.log("wedgeClick():", buttonColour, 'was clicked');
+        reactToClick(buttonColour);
+      },
+      /** Plays a game of Simon */
+      playGame = function() {
+        gameStarted = true;
+        // set number of steps to 1
+        currentStep = 0;
+        while (gameStarted) {
+          currentStep++;
+          // play sequence up to currentStep
+          playSequence(currentStep);
+          // wait for sequence to play
+          var aiWait = LONG_INTERVAL * currentStep;
+          setTimeout(function() {
             playerTurn = true;
             console.log('playerTurn is true?', playerTurn)
-			      makePlayerMove();
-        }, aiWait)
-        // wait for response
-        var playerWait = LONG_INTERVAL * currentStep * 2;
-        setTimeout(function() {
-          playerTurn = false;
+            makePlayerMove();
+          }, aiWait)
+          // wait for response
+          var playerWait = LONG_INTERVAL * currentStep * 2;
+          setTimeout(function() {
+            playerTurn = false;
             console.log('playerTurn is false?', playerTurn)
-        }, playerWait)
-        // check response array element against corresponding element in sequence array
-        // if wrong, indicate error
-        // start sequence again from beginning
-        // if correct increment currentStep and play sequence again
+          }, playerWait)
+          // check response array element against corresponding element in sequence array
+          // if wrong, indicate error
+          // start sequence again from beginning
+          // if correct increment currentStep and play sequence again
 
-        if (currentStep == MOVES) {
-          gameStarted = false;
+          if (currentStep == MOVES) {
+            gameStarted = false;
+          }
+        } // end while
+      }, // end playGame
+
+      makePlayerMove = function(colour) {
+        openWedges();
+        console.log("******makePlayerMove(),currentStep:", currentStep);
+        playerArr.push(colour);
+        console.log('this.playerArr:', playerArr);
+        playerMoves++;
+        console.log('this.playerMoves:', playerMoves);
+        if (playerMoves == currentStep) {
+          compare();
         }
-      } // end while
-  }, // end playGame
-  /*
-    aiTurn = function() {
-      console.log("******* this.AiTurn()");
-      // what are we doing here?
-    }, */ //GET RID OF THIS?
-    makePlayerMove = function(colour) {
-	    openWedges();
-      console.log("******makePlayerMove(),currentStep:", currentStep);
-      playerArr.push(colour);
-      console.log('this.playerArr:',playerArr);
-      playerMoves++;
-      console.log('this.playerMoves:', playerMoves);
-      if (playerMoves == currentStep) {
-        compare();
-      }
-    },
-    compare = function() {
-      // compare current click colour to array
-      // if it's right, continue
-      // if it's wrong, restart sequence
+      },
+      compare = function() {
+        // compare current click colour to array
+        // if it's right, continue
+        // if it's wrong, restart sequence
 
 
-      // do we need this?
-      //aiTurn();
-    };
+        // do we need this?
+        //aiTurn();
+      };
     /* public functions */
     this.start = function() {
       console.log("****** new Game started");
