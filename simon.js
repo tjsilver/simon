@@ -150,13 +150,13 @@ document.addEventListener("DOMContentLoaded", function () {
         playSequence();
         gameStarted = false; // remove this later
         // wait for sequence to play
-        var aiWait = (SHORT_INTERVAL + LONG_INTERVAL) * currentStep; // sort out this timer
+        var aiWait = LONG_INTERVAL * currentStep; 
         setTimeout(function() {
             playerTurn = true;
             console.log('playerTurn is true?', playerTurn)
         }, aiWait)
         // wait for response
-        var playerWait = aiWait + LONG_INTERVAL * currentStep;
+        var playerWait = LONG_INTERVAL * currentStep * 2;
         setTimeout(function() {
           playerTurn = false;
             console.log('playerTurn is false?', playerTurn)
