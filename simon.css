@@ -20,8 +20,7 @@ body {
   height: 500px;
 }
 
-
-/* colour buttons */
+/* wedge colours */
 
 .row {
   padding: 0;
@@ -101,7 +100,6 @@ body {
 #yellow.light {
   background-color: yellow;
 }
-
 
 /* controls and display*/
 
