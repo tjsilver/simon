@@ -118,37 +118,25 @@ document.addEventListener('DOMContentLoaded', function() {
         playerArr = [];
         return true;
       },
-      /** Lights up a wedge for a period of time. */
-      lightUp = function(colour) {
-        var wedge = document.getElementById(colour);
+      /** Lights up a wedge */
+      glow = function(colour) {
+        let wedge = getWedge(colour);
         wedge.classList.add('light');
-        wedge.classList.remove('dark');
-        setTimeout(function() {
-          wedge.classList.add('dark');
-          wedge.classList.remove('light');
-        }, SHORT_INTERVAL);
       },
+      /** Dims a wedge */
+      dim = (colour) => {
+        let wedge = getWedge(colour) 
+        wedge.classList.remove('dark');        
+      },
+      /** Gets a wedge */
+      getWedge = (colour) => {
+        return document.getElementById(colour);
+      }
+      ,
       /** Plays a sequence of coloured buttons */
       playSequence = function(numSteps) {
         console.log('playSequence(), numSteps', numSteps);
-        let i = 0;
-
-        function lightSequence() {
-          lightUp(sequence[i]);
-          i++;
-          if (i < numSteps) {
-            setTimeout(lightSequence, LONG_INTERVAL)
-          }
-        }
-        lightSequence();
-        // wait for sequence to play
-        var aiWait = LONG_INTERVAL * currentStep;
-        setTimeout(function() {
-          playerTurn = true;
-          openWedges();
-          console.log('playerTurn is true?', playerTurn)
-          return playerTurn;
-        }, aiWait)
+        // TODO: write this
       },
       wedgeClick = function(e) {
         var buttonColour = e.target.id;
