@@ -119,24 +119,39 @@ document.addEventListener('DOMContentLoaded', function() {
         return true;
       },
       /** Lights up a wedge */
-      glow = function(colour) {
-        let wedge = getWedge(colour);
+      glow = function(wedge) {
+        console.log('glow wedge', wedge);
         wedge.classList.add('light');
+        wedge.classList.remove('dark');
       },
       /** Dims a wedge */
-      dim = (colour) => {
-        let wedge = getWedge(colour) 
-        wedge.classList.remove('dark');        
+      dim = (wedge) => {
+        console.log('dim wedge', wedge);
+        wedge.classList.add('dark');
+        wedge.classList.remove('light');        
       },
       /** Gets a wedge */
       getWedge = (colour) => {
+        console.log('getWedge',document.getElementById(colour));
         return document.getElementById(colour);
       }
       ,
+      lightup = (colour) => {
+        console.log('lightup');
+        let wedge = getWedge(colour);
+        glow(wedge);
+        setTimeout(function() {
+          console.log('wedge in timeout function', wedge);
+          dim(wedge);
+        }, SHORT_INTERVAL);
+      }, 
       /** Plays a sequence of coloured buttons */
       playSequence = function(numSteps) {
         console.log('playSequence(), numSteps', numSteps);
-        // TODO: write this
+        // TODO: setInterval??
+        for (let i=0; i<numSteps; i++) {
+            lightup(sequence[i]);
+        }
       },
       wedgeClick = function(e) {
         var buttonColour = e.target.id;
@@ -166,9 +181,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // set number of steps to 1
         currentStep = 1;
         // play sequence up to currentStep
-        for (let i = 0; i < MOVES; i++) {
+        for (let i = 0; i < currentStep; i++) {
           // play sequence up to currentStep
           playSequence(currentStep);
+          // open wedges for player
+          // fill player array with player's choices until array the same length as numsteps
           // test whole player array for correctness
           // if wrong: make currentStep = 1
           // else: add another step and play sequence again
