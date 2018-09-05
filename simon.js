@@ -148,9 +148,10 @@ document.addEventListener('DOMContentLoaded', function() {
       /** Plays a sequence of coloured buttons */
       playSequence = function(numSteps) {
         console.log('playSequence(), numSteps', numSteps);
-        // TODO: setInterval??
         for (let i=0; i<numSteps; i++) {
+          setTimeout(function() {
             lightup(sequence[i]);
+          }, LONG_INTERVAL * i);
         }
       },
       wedgeClick = function(e) {
@@ -179,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
         playerArr = []
         gameStarted = true;
         // set number of steps to 1
-        currentStep = 1;
+        currentStep = 3;
         // play sequence up to currentStep
         for (let i = 0; i < currentStep; i++) {
           // play sequence up to currentStep
