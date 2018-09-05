@@ -120,19 +120,16 @@ document.addEventListener('DOMContentLoaded', function() {
       },
       /** Lights up a wedge */
       glow = function(wedge) {
-        console.log('glow wedge', wedge);
         wedge.classList.add('light');
         wedge.classList.remove('dark');
       },
       /** Dims a wedge */
       dim = (wedge) => {
-        console.log('dim wedge', wedge);
         wedge.classList.add('dark');
         wedge.classList.remove('light');        
       },
       /** Gets a wedge */
       getWedge = (colour) => {
-        console.log('getWedge',document.getElementById(colour));
         return document.getElementById(colour);
       }
       ,
@@ -141,7 +138,6 @@ document.addEventListener('DOMContentLoaded', function() {
         let wedge = getWedge(colour);
         glow(wedge);
         setTimeout(function() {
-          console.log('wedge in timeout function', wedge);
           dim(wedge);
         }, SHORT_INTERVAL);
       }, 
@@ -180,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
         playerArr = []
         gameStarted = true;
         // set number of steps to 1
-        currentStep = 3;
+        currentStep = 20;
         // play sequence up to currentStep
         for (let i = 0; i < currentStep; i++) {
           // play sequence up to currentStep
