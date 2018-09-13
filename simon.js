@@ -82,17 +82,20 @@ document.addEventListener('DOMContentLoaded', function() {
       //playerArr = [],
       numClicks = -1;
       /** Turns on listeners for wedges. */
-      openWedges = function() {
+      openWedges = function(currentStep) {
         console.log('openWedges()');
         for (let i = 0; i < WEDGES.length; i++) {
           document.getElementById(WEDGES[i]).classList.remove('closed');
           document.getElementById(WEDGES[i]).classList.add('open');
           document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
         }
+        setTimeout(function() {
+          closeWedges();
+        }, LONG_INTERVAL * currentStep);
       },
       /** Turns off listeners for wedges. */
       closeWedges = function() {
-        console.log('closeWedges()')
+        console.log('closeWedges()');
         for (let i = 0; i < WEDGES.length; i++) {
           document.getElementById(WEDGES[i]).classList.remove('open');
           document.getElementById(WEDGES[i]).classList.add('closed');
@@ -196,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
           // open wedges for player
           setTimeout(function() {
             playerTurn = true;
-            openWedges();
+            openWedges(currentStep);
           }, LONG_INTERVAL * currentStep);
           // fill player array with player's choices until array the same length as numsteps
           
