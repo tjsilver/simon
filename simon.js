@@ -23,7 +23,8 @@ document.addEventListener('DOMContentLoaded', function() {
   var start = document.getElementById('start'),
     strict = document.getElementById('strict'),
     strictIndicator = document.getElementById('strict-indicator'),
-    strictOn = false;
+    strictOn = false,
+    stepStarted = false;
 
   /* global variables */
   const SHORT_INTERVAL = 1500,
@@ -78,10 +79,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var gameStarted = false,
       playerTurn = false,
       sequence = [],
-      playerArr = [],
+      //playerArr = [],
+      numClicks = -1;
       /** Turns on listeners for wedges. */
       openWedges = function() {
-        console.log('openWedges()')
+        console.log('openWedges()');
         for (let i = 0; i < WEDGES.length; i++) {
           document.getElementById(WEDGES[i]).classList.remove('closed');
           document.getElementById(WEDGES[i]).classList.add('open');
@@ -115,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Game gameReset');
         gameStarted = false;
         sequence = fillSequence();
-        playerArr = [];
+        //playerArr = [];
         return true;
       },
       /** Lights up a wedge */
@@ -150,43 +152,58 @@ document.addEventListener('DOMContentLoaded', function() {
           }, LONG_INTERVAL * i);
         }
       },
+      resetClicks = function() {
+        numClicks = -1;
+      },
+      incrementClicks = function() {
+        numClicks++;
+      },
       wedgeClick = function(e) {
+        incrementClicks();
         var buttonColour = e.target.id;
-        console.log('wedgeClick():', buttonColour, 'was clicked', 'playerArr', playerArr, 'playerTurn', playerTurn);
+        console.log('wedgeClick():', buttonColour, 'was clicked', 'playerTurn', playerTurn);
         var playerArrLength = playerArr.length;
-        if (playerTurn && playerArrLength <= currentStep) {
-          playerArr.push(buttonColour);
-          compareSequence(playerArrLength);
+        if (playerTurn && numClicks <= currentStep) {
+          compareSequence(playerArrLength, buttonColour);
         } else {
           closeWedges();
-          playerTurn == false;
+          playerTurn = false;
+          resetClicks();
         }
       },
-      compareSequence = function(numClicks) {
-        console.log('compareSequence', playerArr, sequence, 'numClicks', numClicks);
-        for (let i = 0; i < currentStep; i++) {
-          if (playerArr[i] != sequence[i]) {
-            return false;
-          }
+      compareSequence = function(numClicks, colour) {
+        console.log('compareSequence', 'numClicks', numClicks, 'sequence', sequence, 'colour', colour);
+        //return playerArr[numClicks] == sequence[numClicks];
+        if (colour === sequence[numClicks]) {
+          console.log('compareSequence is returning true');
+          return true;
+        } else {
+          console.log('compareSequence is returning false');
+          return false;
         }
-        return true;
       },
       /** Plays a game of Simon */
       playGame = function() {
         playerArr = []
         gameStarted = true;
         // set number of steps to 1
-        currentStep = 20;
+        currentStep = 1;
         // play sequence up to currentStep
-        for (let i = 0; i < currentStep; i++) {
+        for (let i=0; i<currentStep; i++) {
           // play sequence up to currentStep
+          playerTurn = false;
           playSequence(currentStep);
           // open wedges for player
+          setTimeout(function() {
+            playerTurn = true;
+            openWedges();
+          }, LONG_INTERVAL * currentStep);
           // fill player array with player's choices until array the same length as numsteps
+          
           // test whole player array for correctness
           // if wrong: make currentStep = 1
           // else: add another step and play sequence again
-        }
+        } // end while
         // end game
         if (currentStep == MOVES) {
           gameStarted = false;
