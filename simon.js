@@ -84,6 +84,8 @@ document.addEventListener('DOMContentLoaded', function() {
       playerTurn = false,
       sequence = [],
       //playerArr = [],
+      // set number of steps to 1
+      currentStep = 1,
       numClicks = -1,
       playerGo = function() {
         playerTurn = true;
@@ -182,7 +184,6 @@ document.addEventListener('DOMContentLoaded', function() {
           compareSequence(playerArrLength, buttonColour);
         } else {
           closeWedges();
-          playerTurn = false;
           resetClicks();
         }
       },
@@ -197,20 +198,25 @@ document.addEventListener('DOMContentLoaded', function() {
           return false;
         }
       },
+      addStep = function() {
+        currentStep++;
+        console.log('addStep, currentStep: ', currentStep);
+      },
+      playRound = function() {
+
+      }
       /** Plays a game of Simon */
       playGame = function() {
         playerArr = []
         gameStarted = true;
-        // set number of steps to 1
-        currentStep = 1;
+        // set player turn to false
+        playerTurn = false;
         // play sequence up to currentStep
         for (let i=0; i<currentStep; i++) {
           // play sequence up to currentStep
-          playerTurn = false;
           playSequence(currentStep);
           // open wedges for player
           setTimeout(function() {
-            playerTurn = true;
             openWedges(currentStep);
           }, LONG_INTERVAL * currentStep);
           // fill player array with player's choices until array the same length as numsteps
@@ -218,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
           // test whole player array for correctness
           // if wrong: make currentStep = 1
           // else: add another step and play sequence again
-        } // end while
+        } // end for
         // end game
         if (currentStep == MOVES) {
           gameStarted = false;
