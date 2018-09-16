@@ -203,12 +203,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('addStep, currentStep: ', currentStep);
       },
       playRound = function() {
-
-      }
-      /** Plays a game of Simon */
-      playGame = function() {
-        playerArr = []
-        gameStarted = true;
         // set player turn to false
         playerTurn = false;
         // play sequence up to currentStep
@@ -225,6 +219,12 @@ document.addEventListener('DOMContentLoaded', function() {
           // if wrong: make currentStep = 1
           // else: add another step and play sequence again
         } // end for
+      }
+      /** Plays a game of Simon */
+      playGame = function() {
+        playerArr = []
+        gameStarted = true;
+        playRound();
         // end game
         if (currentStep == MOVES) {
           gameStarted = false;
