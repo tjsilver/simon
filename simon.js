@@ -88,27 +88,29 @@ document.addEventListener('DOMContentLoaded', function() {
       currentStep = 1,
       numClicks = -1,
       playerGo = function() {
+        openWedges(currentStep);
         playerTurn = true;
+        console.log('playerGo, playerTurn:', playerTurn);
       },
       playerStop = function() {
+        closeWedges();
         playerTurn = false;
+        console.log('playerStop, playerTurn:', playerTurn);
       }
       /** Turns on listeners for wedges. */
       openWedges = function(currentStep) {
-        playerGo();
-        console.log('openWedges(), playerTurn:', playerTurn);
+        console.log('openWedges()');
         for (let i = 0; i < WEDGES.length; i++) {
           document.getElementById(WEDGES[i]).classList.remove('closed');
           document.getElementById(WEDGES[i]).classList.add('open');
           document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
         }
         setTimeout(function() {
-          closeWedges();
+          playerStop();
         }, LONG_INTERVAL * currentStep);
       },
       /** Turns off listeners for wedges. */
       closeWedges = function() {
-        playerStop();
         console.log('closeWedges(), playerTurn: ', playerTurn);
         for (let i = 0; i < WEDGES.length; i++) {
           document.getElementById(WEDGES[i]).classList.remove('open');
@@ -183,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (playerTurn && numClicks <= currentStep) {
           compareSequence(playerArrLength, buttonColour);
         } else {
-          closeWedges();
+          playerStop();
           resetClicks();
         }
       },
@@ -211,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function() {
           playSequence(currentStep);
           // open wedges for player
           setTimeout(function() {
-            openWedges(currentStep);
+            playerGo();
           }, LONG_INTERVAL * currentStep);
           // fill player array with player's choices until array the same length as numsteps
           
