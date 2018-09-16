@@ -70,6 +70,10 @@ document.addEventListener('DOMContentLoaded', function() {
     newgame = new Game();
     newgame.start()
   }
+  /** Wedge functions. */
+  function Wedge() {
+    //Todo: move wedge functions here 
+  }
   /**
    * Represents a game of Simon.
    * @constructor
@@ -80,10 +84,17 @@ document.addEventListener('DOMContentLoaded', function() {
       playerTurn = false,
       sequence = [],
       //playerArr = [],
-      numClicks = -1;
+      numClicks = -1,
+      playerGo = function() {
+        playerTurn = true;
+      },
+      playerStop = function() {
+        playerTurn = false;
+      }
       /** Turns on listeners for wedges. */
       openWedges = function(currentStep) {
-        console.log('openWedges()');
+        playerGo();
+        console.log('openWedges(), playerTurn:', playerTurn);
         for (let i = 0; i < WEDGES.length; i++) {
           document.getElementById(WEDGES[i]).classList.remove('closed');
           document.getElementById(WEDGES[i]).classList.add('open');
@@ -95,7 +106,8 @@ document.addEventListener('DOMContentLoaded', function() {
       },
       /** Turns off listeners for wedges. */
       closeWedges = function() {
-        console.log('closeWedges()');
+        playerStop();
+        console.log('closeWedges(), playerTurn: ', playerTurn);
         for (let i = 0; i < WEDGES.length; i++) {
           document.getElementById(WEDGES[i]).classList.remove('open');
           document.getElementById(WEDGES[i]).classList.add('closed');
