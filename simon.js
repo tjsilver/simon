@@ -137,15 +137,15 @@ document.addEventListener('DOMContentLoaded', function() {
         return arr;
       },
       /** Resets the game.*/
-      gameReset = function() {
-        console.log('Game gameReset');
+      resetGame = function() {
+        console.log('Game resetGame');
         gameStarted = false;
         sequence = fillSequence();
         //playerArr = [];
         return true;
       },
       /** Lights up a wedge */
-      glow = function(wedge) {
+      brighten = function(wedge) {
         wedge.classList.add('light');
         wedge.classList.remove('dark');
       },
@@ -159,11 +159,11 @@ document.addEventListener('DOMContentLoaded', function() {
         return document.getElementById(colour);
       }
       ,
-      /** Causes a wedge of specified colour to glow and then dim */
+      /** Causes a wedge of specified colour to brighten and then dim */
       lightup = (colour, speed) => {
         console.log('lightup');
         let wedge = getWedge(colour);
-        glow(wedge);
+        brighten(wedge);
         setTimeout(function() {
           dim(wedge);
         }, speed);
@@ -228,7 +228,10 @@ document.addEventListener('DOMContentLoaded', function() {
           // if wrong: make currentStep = 1
           // else: add another step and play sequence again
         } // end for
-      }
+      },
+      endRound = function() {
+        //reset round to beginning
+      },
       /** Plays a game of Simon */
       playGame = function() {
         playerArr = []
@@ -242,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
     /* public functions */
     this.start = function() {
       console.log('****** new Game started');
-      gameReset();
+      resetGame();
       playGame();
     }; // end start()
   }; // end Game class
