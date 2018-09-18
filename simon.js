@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
       //playerArr = [],
       // set number of steps to 1
       currentStep = 1,
-      numClicks = -1,
+      pointInSequence = -1,
       playerGo = function() {
         openWedges(currentStep);
         playerTurn = true;
@@ -178,10 +178,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       },
       resetClicks = function() {
-        numClicks = -1;
+        pointInSequence = -1;
       },
       incrementClicks = function() {
-        numClicks++;
+        pointInSequence++;
       },
       wedgeClick = function(e) {
         incrementClicks();
@@ -189,17 +189,17 @@ document.addEventListener('DOMContentLoaded', function() {
         lightup(buttonColour, FLASH);
         console.log('wedgeClick():', buttonColour, 'was clicked', 'playerTurn', playerTurn);
         var playerArrLength = playerArr.length;
-        if (playerTurn && numClicks <= currentStep) {
+        if (playerTurn && pointInSequence <= currentStep) {
           compareSequence(playerArrLength, buttonColour);
         } else {
           playerStop();
           resetClicks();
         }
       },
-      compareSequence = function(numClicks, colour) {
-        console.log('compareSequence', 'numClicks', numClicks, 'sequence', sequence, 'colour', colour);
-        //return playerArr[numClicks] == sequence[numClicks];
-        if (colour === sequence[numClicks]) {
+      compareSequence = function(pointInSequence, colour) {
+        console.log('compareSequence', 'pointInSequence', pointInSequence, 'sequence', sequence, 'colour', colour);
+        //return playerArr[pointInSequence] == sequence[pointInSequence];
+        if (colour === sequence[pointInSequence]) {
           console.log('compareSequence is returning true');
           return true;
         } else {
