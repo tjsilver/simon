@@ -27,7 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
     stepStarted = false;
 
   /* global variables */
-  const SHORT_INTERVAL = 1500,
+  const FLASH = 250,
+    SHORT_INTERVAL = 1500,
     LONG_INTERVAL = SHORT_INTERVAL * 1.5,
     WEDGES = ['green', 'red', 'blue', 'yellow'],
     MOVES = 20;
@@ -91,6 +92,9 @@ document.addEventListener('DOMContentLoaded', function() {
         openWedges(currentStep);
         playerTurn = true;
         console.log('playerGo, playerTurn:', playerTurn);
+        setTimeout(function() {
+          playerStop();
+        }, LONG_INTERVAL * currentStep);
       },
       playerStop = function() {
         closeWedges();
@@ -105,9 +109,10 @@ document.addEventListener('DOMContentLoaded', function() {
           document.getElementById(WEDGES[i]).classList.add('open');
           document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
         }
+        /*
         setTimeout(function() {
           playerStop();
-        }, LONG_INTERVAL * currentStep);
+        }, LONG_INTERVAL * currentStep);*/
       },
       /** Turns off listeners for wedges. */
       closeWedges = function() {
@@ -154,20 +159,20 @@ document.addEventListener('DOMContentLoaded', function() {
         return document.getElementById(colour);
       }
       ,
-      lightup = (colour) => {
+      lightup = (colour, speed) => {
         console.log('lightup');
         let wedge = getWedge(colour);
         glow(wedge);
         setTimeout(function() {
           dim(wedge);
-        }, SHORT_INTERVAL);
+        }, speed);
       }, 
       /** Plays a sequence of coloured buttons */
       playSequence = function(numSteps) {
         console.log('playSequence(), numSteps', numSteps);
         for (let i=0; i<numSteps; i++) {
           setTimeout(function() {
-            lightup(sequence[i]);
+            lightup(sequence[i], SHORT_INTERVAL);
           }, LONG_INTERVAL * i);
         }
       },
@@ -180,6 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
       wedgeClick = function(e) {
         incrementClicks();
         var buttonColour = e.target.id;
+        lightup(buttonColour, FLASH);
         console.log('wedgeClick():', buttonColour, 'was clicked', 'playerTurn', playerTurn);
         var playerArrLength = playerArr.length;
         if (playerTurn && numClicks <= currentStep) {
