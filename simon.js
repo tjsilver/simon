@@ -159,6 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return document.getElementById(colour);
       }
       ,
+      /** Causes a wedge of specified colour to glow and then dim */
       lightup = (colour, speed) => {
         console.log('lightup');
         let wedge = getWedge(colour);
