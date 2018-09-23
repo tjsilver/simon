@@ -18,8 +18,7 @@ User Story: I can win the game by getting a series of 20 steps correct. I am not
 */
 
 document.addEventListener('DOMContentLoaded', function() {
-
-  /* buttons */
+    /* buttons */
   var start = document.getElementById('start'),
     strict = document.getElementById('strict'),
     strictIndicator = document.getElementById('strict-indicator'),
@@ -80,21 +79,23 @@ document.addEventListener('DOMContentLoaded', function() {
    */
   function Game() {
     /* private */
-    var hasFlashed = false,
-      gameStarted = false,
+    var gameStarted = false,
+      //hasFlashed = false,
       playerTurn = false,
       sequence = [],
       //playerArr = [],
       // set number of steps to 1
       currentStep = 1,
       pointInSequence = -1,
+      playerMoves = 0,
       playerGo = () => {
+        startPlayerTurn();
         openWedges();
         return true;
       },
       playerStop = () => {
         closeWedges();
-        playerTurn = false;
+        endPlayerTurn();
         console.log('playerStop, playerTurn:', playerTurn);
       }
       /** Turns on listeners for wedges. */
@@ -137,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Game resetGame');
         gameStarted = false;
         sequence = fillSequence();
-        //playerArr = [];
+        resetPlayerMoves();
         return true;
       },
       /** Lights up a wedge */
@@ -154,6 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
       getWedge = (colour) => {
         return document.getElementById(colour);
       },
+      
       flashed = function() {
         hasFlashed = true;
       },
@@ -213,6 +215,18 @@ document.addEventListener('DOMContentLoaded', function() {
         currentStep++;
         console.log('addStep, currentStep: ', currentStep);
       },
+      endPlayerTurn = () => {
+        playerTurn = false;
+      },
+      startPlayerTurn = () => {
+        playerTurn = true;
+      },
+      incrementPlayerMoves = () => {
+        playerMoves++;
+      },
+      resetPlayerMoves = () => {
+        playerMoves = 0;
+      },
       playRound = function() {
         // set player turn to false
         playerTurn = false;
@@ -221,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
           // play sequence up to currentStep
           playSequence(currentStep);
           // open wedges for player
-          playterturn = playerGo();
+          playerGo();
           // fill player array with player's choices until array the same length as numsteps
           
           // test whole player array for correctness
