@@ -30,8 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     strict = document.getElementById('strict'),
     strictIndicator = document.getElementById('strict-indicator'),
     strictOn = false;
-
-  // set listeners 
+  // set listeners on buttons
   start.addEventListener('click', startPress, false);
   strict.addEventListener('click', useStrict, false);
 
