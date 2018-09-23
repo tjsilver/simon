@@ -36,12 +36,12 @@ document.addEventListener('DOMContentLoaded', function() {
   strict.addEventListener('click', useStrict, false);
 
   // button presses 
-  function buttonDown(el) {
-    el.classList.add('pressed');
+  function buttonDown(button) {
+    button.classList.add('pressed');
   }
 
-  function buttonUp(el) {
-    el.classList.remove('pressed');
+  function buttonUp(button) {
+    button.classList.remove('pressed');
   }
 
   // strict mode 
@@ -70,10 +70,48 @@ document.addEventListener('DOMContentLoaded', function() {
     newgame.start();
   }
 
+  let states = {
+    gameStarted: false,
+    sequence: [],
+    playerTurn: false,
+    init() {
+      console.log('states.init');
+      this.gameStarted = false;
+      this.sequence = [];
+      this.playerTurn = false;
+    }
+  };
+
+    
+  
+
+  function Round() {
+    //private methods
+    let end = () => {
+      console.log("round ended!");
+    }
+    //public methods
+    this.start = () => {
+      console.log("round started!");
+      states.init();
+      console.log("states.gameStarted, states.sequence, states.playerTurn",states.gameStarted, states.sequence, states.playerTurn);
+    }
+    
+  }
+
   function Game() {
+    // private methods
+    let startRound = () => {
+      let round = new Round();
+      round.start();
+    };
+    // public methods
     this.start = () => {
       console.log("game started");
-    }
+      states.gameStarted = true;
+      console.log('states.gameStarted:', states.gameStarted);    
+      startRound();
+    };
   }
 
 }); // end DOMContentLoaded
