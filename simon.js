@@ -15,28 +15,30 @@ User Story: If I want to restart, I can hit a button to do so, and the game will
 User Story: I can play in strict mode where if I get a button press wrong, it notifies me that I have done so, and the game restarts at a new random series of button presses.
 
 User Story: I can win the game by getting a series of 20 steps correct. I am notified of my victory, then the game starts over.
-*/
+ 
 
 document.addEventListener('DOMContentLoaded', function() {
-    /* buttons */
+
+}); // end DOMContentLoaded
+    /* buttons 
   var start = document.getElementById('start'),
     strict = document.getElementById('strict'),
     strictIndicator = document.getElementById('strict-indicator'),
     strictOn = false,
     stepStarted = false;
 
-  /* global variables */
+  /* global variables 
   const FLASH = 250,
     SHORT_INTERVAL = 1500,
     LONG_INTERVAL = SHORT_INTERVAL * 1.5,
     WEDGES = ['green', 'red', 'blue', 'yellow'],
     MOVES = 20;
 
-  /* set listeners */
+  /* set listeners 
   start.addEventListener('click', startPress, false);
   strict.addEventListener('click', useStrict, false);
 
-  /* button presses */
+  /* button presses 
   function buttonDown(el) {
     el.classList.add('pressed');
   }
@@ -45,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
     el.classList.remove('pressed');
   }
 
-  /* strict mode */
+  /* strict mode 
   function useStrict() {
     if (!strictOn) {
       buttonDown(strict);
@@ -59,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('strict status', strictOn);
   }
 
-  /** Initiates a game. */
+  /** Initiates a game. 
   function startPress() {
     console.log('startPress');
     buttonDown(start);
@@ -70,15 +72,15 @@ document.addEventListener('DOMContentLoaded', function() {
     newgame = new Game();
     newgame.start()
   }
-  /** Wedge functions. */
+  /** Wedge functions. 
   function Wedge() {
     //Todo: move wedge functions here 
   }
   /**
    * Represents a game of Simon.
-   */
+   
   function Game() {
-    /* private */
+    /* private 
     var gameStarted = false,
       //hasFlashed = false,
       playerTurn = false,
@@ -98,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
         endPlayerTurn();
         console.log('playerStop, playerTurn:', playerTurn);
       }
-      /** Turns on listeners for wedges. */
+      /** Turns on listeners for wedges. 
       openWedges = function() {
         console.log('openWedges()');
         for (let i = 0; i < WEDGES.length; i++) {
@@ -109,9 +111,9 @@ document.addEventListener('DOMContentLoaded', function() {
         /*
         setTimeout(function() {
           playerStop();
-        }, LONG_INTERVAL * currentStep);*/
+        }, LONG_INTERVAL * currentStep);
       },
-      /** Turns off listeners for wedges. */
+      /** Turns off listeners for wedges. 
       closeWedges = function() {
         console.log('closeWedges(), playerTurn: ', playerTurn);
         for (let i = 0; i < WEDGES.length; i++) {
@@ -120,11 +122,11 @@ document.addEventListener('DOMContentLoaded', function() {
           document.getElementById(WEDGES[i]).removeEventListener('click', wedgeClick, false);
         }
       },
-      /** Generates a random number between 0 and 3.*/
+      /** Generates a random number between 0 and 3.
       randomColourIndex = function() {
         return Math.floor(Math.random() * 3);
       },
-      /** Returns an array with random numbers between 0 and 3.*/
+      /** Returns an array with random numbers between 0 and 3.
       fillSequence = function() {
         arr = []
         for (i = 0; i < MOVES; i++) {
@@ -133,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('sequence', arr)
         return arr;
       },
-      /** Resets the game.*/
+      /** Resets the game.
       resetGame = function() {
         console.log('Game resetGame');
         gameStarted = false;
@@ -141,17 +143,17 @@ document.addEventListener('DOMContentLoaded', function() {
         resetPlayerMoves();
         return true;
       },
-      /** Lights up a wedge */
+      /** Lights up a wedge 
       brighten = function(wedge) {
         wedge.classList.add('light');
         wedge.classList.remove('dark');
       },
-      /** Dims a wedge */
+      /** Dims a wedge 
       dim = (wedge) => {
         wedge.classList.add('dark');
         wedge.classList.remove('light');        
       },
-      /** Gets a wedge */
+      /** Gets a wedge 
       getWedge = (colour) => {
         return document.getElementById(colour);
       },
@@ -159,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
       flashed = function() {
         hasFlashed = true;
       },
-      /** Causes a wedge of specified colour to brighten and then dim */
+      /** Causes a wedge of specified colour to brighten and then dim 
       lightup = (colour, speed, func) => {
         console.log('lightup');
         let wedge = getWedge(colour);
@@ -169,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
           func ? func() : null;
         }, speed);
       }, 
-      /** Plays a sequence of coloured buttons */
+      /** Plays a sequence of coloured buttons 
       /*playSequence = function(numSteps) {
         console.log('playSequence(), numSteps', numSteps);
         for (let i=0; i<numSteps; i++) {
@@ -177,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
             lightup(sequence[i], SHORT_INTERVAL);
           }, LONG_INTERVAL * i);
         }
-      }*/
+      }
       playSequence = function(numSteps) {
         console.log('playSequence(), numSteps', numSteps);
         lightup(sequence[0], SHORT_INTERVAL, flashed);
@@ -246,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
       endRound = function() {
         //reset round to beginning
       },
-      /** Plays a game of Simon */
+      /** Plays a game of Simon 
       playGame = function() {
         playerArr = []
         gameStarted = true;
@@ -256,11 +258,10 @@ document.addEventListener('DOMContentLoaded', function() {
           gameStarted = false;
         }
       }; // end playGame
-    /* public functions */
+    /* public functions 
     this.start = function() {
       console.log('****** new Game started');
       resetGame();
       playGame();
     }; // end start()
-  }; // end Game class
-}); // end DOMContentLoaded
+  }; // end Game class*/
