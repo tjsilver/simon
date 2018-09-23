@@ -77,32 +77,28 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   /**
    * Represents a game of Simon.
-   * @constructor
    */
   function Game() {
     /* private */
-    var gameStarted = false,
+    var hasFlashed = false,
+      gameStarted = false,
       playerTurn = false,
       sequence = [],
       //playerArr = [],
       // set number of steps to 1
       currentStep = 1,
       pointInSequence = -1,
-      playerGo = function() {
-        openWedges(currentStep);
-        playerTurn = true;
-        console.log('playerGo, playerTurn:', playerTurn);
-        setTimeout(function() {
-          playerStop();
-        }, LONG_INTERVAL * currentStep);
+      playerGo = () => {
+        openWedges();
+        return true;
       },
-      playerStop = function() {
+      playerStop = () => {
         closeWedges();
         playerTurn = false;
         console.log('playerStop, playerTurn:', playerTurn);
       }
       /** Turns on listeners for wedges. */
-      openWedges = function(currentStep) {
+      openWedges = function() {
         console.log('openWedges()');
         for (let i = 0; i < WEDGES.length; i++) {
           document.getElementById(WEDGES[i]).classList.remove('closed');
@@ -157,25 +153,32 @@ document.addEventListener('DOMContentLoaded', function() {
       /** Gets a wedge */
       getWedge = (colour) => {
         return document.getElementById(colour);
-      }
-      ,
+      },
+      flashed = function() {
+        hasFlashed = true;
+      },
       /** Causes a wedge of specified colour to brighten and then dim */
-      lightup = (colour, speed) => {
+      lightup = (colour, speed, func) => {
         console.log('lightup');
         let wedge = getWedge(colour);
         brighten(wedge);
         setTimeout(function() {
           dim(wedge);
+          func ? func() : null;
         }, speed);
       }, 
       /** Plays a sequence of coloured buttons */
-      playSequence = function(numSteps) {
+      /*playSequence = function(numSteps) {
         console.log('playSequence(), numSteps', numSteps);
         for (let i=0; i<numSteps; i++) {
           setTimeout(function() {
             lightup(sequence[i], SHORT_INTERVAL);
           }, LONG_INTERVAL * i);
         }
+      }*/
+      playSequence = function(numSteps) {
+        console.log('playSequence(), numSteps', numSteps);
+        lightup(sequence[0], SHORT_INTERVAL, flashed);
       },
       resetClicks = function() {
         pointInSequence = -1;
@@ -186,11 +189,10 @@ document.addEventListener('DOMContentLoaded', function() {
       wedgeClick = function(e) {
         incrementClicks();
         var buttonColour = e.target.id;
-        lightup(buttonColour, FLASH);
+        lightup(buttonColour, FLASH, null);
         console.log('wedgeClick():', buttonColour, 'was clicked', 'playerTurn', playerTurn);
-        var playerArrLength = playerArr.length;
         if (playerTurn && pointInSequence <= currentStep) {
-          compareSequence(playerArrLength, buttonColour);
+          compareSequence(pointInSequence, buttonColour);
         } else {
           playerStop();
           resetClicks();
@@ -198,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
       },
       compareSequence = function(pointInSequence, colour) {
         console.log('compareSequence', 'pointInSequence', pointInSequence, 'sequence', sequence, 'colour', colour);
-        //return playerArr[pointInSequence] == sequence[pointInSequence];
+        //return colour == sequence[pointInSequence];
         if (colour === sequence[pointInSequence]) {
           console.log('compareSequence is returning true');
           return true;
@@ -219,9 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
           // play sequence up to currentStep
           playSequence(currentStep);
           // open wedges for player
-          setTimeout(function() {
-            playerGo();
-          }, LONG_INTERVAL * currentStep);
+          playterturn = playerGo();
           // fill player array with player's choices until array the same length as numsteps
           
           // test whole player array for correctness
