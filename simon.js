@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function Game() {
     /* private */
     var gameStarted = false,
-      //hasFlashed = false,
+      hasFlashed = false,
       playerTurn = false,
       sequence = [],
       //playerArr = [],
@@ -154,15 +154,18 @@ document.addEventListener('DOMContentLoaded', function() {
       /** Gets a wedge */
       getWedge = (colour) => {
         return document.getElementById(colour);
-      },
-      
+      },      
       flashed = function() {
         hasFlashed = true;
       },
+      notFlashed = () => {
+        hasFlashed = false;
+      }
       /** Causes a wedge of specified colour to brighten and then dim */
-      lightup = (colour, speed, func) => {
+      lightup = (seq, index, speed, func) => {
+        notFlashed();
         console.log('lightup');
-        let wedge = getWedge(colour);
+        let wedge = getWedge(seq[index]);
         brighten(wedge);
         setTimeout(function() {
           dim(wedge);
@@ -180,7 +183,12 @@ document.addEventListener('DOMContentLoaded', function() {
       }*/
       playSequence = function(numSteps) {
         console.log('playSequence(), numSteps', numSteps);
-        lightup(sequence[0], SHORT_INTERVAL, flashed);
+        let index = 0;
+        while (index < numSteps/* && hasFlashed*/) {
+          lightup(sequence, index, SHORT_INTERVAL, flashed);
+          index++;
+        }
+        
       },
       resetClicks = function() {
         pointInSequence = -1;
@@ -235,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
           // play sequence up to currentStep
           playSequence(currentStep);
           // open wedges for player
-          playerGo();
+          
           // fill player array with player's choices until array the same length as numsteps
           
           // test whole player array for correctness
