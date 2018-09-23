@@ -15,11 +15,71 @@ User Story: If I want to restart, I can hit a button to do so, and the game will
 User Story: I can play in strict mode where if I get a button press wrong, it notifies me that I have done so, and the game restarts at a new random series of button presses.
 
 User Story: I can win the game by getting a series of 20 steps correct. I am notified of my victory, then the game starts over.
- 
+*/
 
 document.addEventListener('DOMContentLoaded', function() {
+  // global variables 
+  const FLASH = 250,
+    SHORT_INTERVAL = 1500,
+    LONG_INTERVAL = SHORT_INTERVAL * 1.5,
+    WEDGES = ['green', 'red', 'blue', 'yellow'],
+    MOVES = 20;
+
+  // buttons 
+  var start = document.getElementById('start'),
+    strict = document.getElementById('strict'),
+    strictIndicator = document.getElementById('strict-indicator'),
+    strictOn = false;
+
+  // set listeners 
+  start.addEventListener('click', startPress, false);
+  strict.addEventListener('click', useStrict, false);
+
+  // button presses 
+  function buttonDown(el) {
+    el.classList.add('pressed');
+  }
+
+  function buttonUp(el) {
+    el.classList.remove('pressed');
+  }
+
+  // strict mode 
+  function useStrict() {
+    if (!strictOn) {
+      buttonDown(strict);
+      strictIndicator.classList.add('on');
+      strictOn = true;
+    } else {
+      buttonUp(strict);
+      strictIndicator.classList.remove('on');
+      strictOn = false;
+    }
+    console.log('strict status', strictOn);
+  }
+
+  // Initiates a game. 
+  function startPress() {
+    console.log('startPress');
+    buttonDown(start);
+    //timer then buttonup
+    setTimeout(function() {
+      buttonUp(start);
+    }, 250);
+    newgame = new Game();
+    newgame.start();
+  }
+
+  function Game() {
+    this.start = () => {
+      console.log("game started");
+    }
+  }
 
 }); // end DOMContentLoaded
+
+
+
     /* buttons 
   var start = document.getElementById('start'),
     strict = document.getElementById('strict'),
