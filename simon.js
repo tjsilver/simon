@@ -22,8 +22,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const FLASH = 250,
     SHORT_INTERVAL = 1500,
     LONG_INTERVAL = SHORT_INTERVAL * 1.5,
-    WEDGES = ['green', 'red', 'blue', 'yellow'],
     MOVES = 20;
+  
+  //test sequence
+  let sequence = ['red', 'green', 'blue'];
+
+  // test
+  let hasFlashed = false;
 
   // buttons 
   var start = document.getElementById('start'),
@@ -88,49 +93,50 @@ document.addEventListener('DOMContentLoaded', function() {
     
   }
 
-  function Wedge() {
-  // Causes a wedge of specified colour to brighten and then dim 
-    lightup = (colour, speed, func) => {
+  const WEDGES = {
+    colours: ['green', 'red', 'blue', 'yellow'],
+    // Causes a wedge of specified colour to brighten and then dim 
+    lightup (colour, speed, func) {
       console.log('lightup');
-      let wedge = getWedge(colour);
-      brighten(wedge);
+      let wedge = this.getWedge(colour);
+      this.brighten(wedge);
       setTimeout(function() {
-        dim(wedge);
+        WEDGES.dim(wedge);
         func ? func() : null;
       }, speed);
     },
-    // Turns on listeners for wedges
-    openWedges = function() {
+    // Turns on listeners for this.colours
+    openWedges() {
       console.log('openWedges()');
-      for (let i = 0; i < WEDGES.length; i++) {
-        document.getElementById(WEDGES[i]).classList.remove('closed');
-        document.getElementById(WEDGES[i]).classList.add('open');
-        document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
+      for (let i = 0; i < this.colours.length; i++) {
+        document.getElementById(this.colours[i]).classList.remove('closed');
+        document.getElementById(this.colours[i]).classList.add('open');
+        document.getElementById(this.colours[i]).addEventListener('click', wedgeClick, false);
       }
     },
     // Turns off listeners for wedges. 
-    closeWedges = function() {
+    closeWedges() {
       console.log('closeWedges(), playerTurn: ', playerTurn);
-      for (let i = 0; i < WEDGES.length; i++) {
-        document.getElementById(WEDGES[i]).classList.remove('open');
-        document.getElementById(WEDGES[i]).classList.add('closed');
-        document.getElementById(WEDGES[i]).removeEventListener('click', wedgeClick, false);
+      for (let i = 0; i < this.colours.length; i++) {
+        document.getElementById(this.colours[i]).classList.remove('open');
+        document.getElementById(this.colours[i]).classList.add('closed');
+        document.getElementById(this.colours[i]).removeEventListener('click', wedgeClick, false);
       }
     },
     // Lights up a wedge 
-    brighten = function(wedge) {
+    brighten(wedge) {
       wedge.classList.add('light');
       wedge.classList.remove('dark');
     },
-    // Dims a wedge 
-    dim = (wedge) => {
+    // Dims a wedge
+    dim(wedge) {
       wedge.classList.add('dark');
       wedge.classList.remove('light');        
     },
     // Gets a wedge 
-    getWedge = (colour) => {
+    getWedge(colour) {
       return document.getElementById(colour);
-    },
+    }
   }
 
   function Game() {
