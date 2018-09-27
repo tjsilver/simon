@@ -23,75 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
     SHORT_INTERVAL = 1500,
     LONG_INTERVAL = SHORT_INTERVAL * 1.5,
     MOVES = 20;
-  
-  //test sequence
-  let sequence = ['red', 'green', 'blue'];
-
-  // test
-  let hasFlashed = false;
-
-  // buttons 
-  var start = document.getElementById('start'),
-    strict = document.getElementById('strict'),
-    strictIndicator = document.getElementById('strict-indicator'),
-    strictOn = false;
-  // set listeners on buttons
-  start.addEventListener('click', startPress, false);
-  strict.addEventListener('click', useStrict, false);
-
-  // button presses 
-  function buttonDown(button) {
-    button.classList.add('pressed');
-  }
-
-  function buttonUp(button) {
-    button.classList.remove('pressed');
-  }
-
-  // strict mode 
-  function useStrict() {
-    if (!strictOn) {
-      buttonDown(strict);
-      strictIndicator.classList.add('on');
-      strictOn = true;
-    } else {
-      buttonUp(strict);
-      strictIndicator.classList.remove('on');
-      strictOn = false;
-    }
-    console.log('strict status', strictOn);
-  }
-
-  // Initiates a game. 
-  function startPress() {
-    console.log('startPress');
-  }
-
-  let states = {
-    gameStarted: false,
-    sequence: [],
-    playerTurn: false,
-    init() {
-      console.log('states.init');
-      this.gameStarted = false;
-      this.sequence = [];
-      this.playerTurn = false;
-    }
-  };
-
-  function Round() {
-    //private methods
-    let end = () => {
-      console.log("round ended!");
-    }
-    //public methods
-    this.start = () => {
-      console.log("round started!");
-      states.init();
-      console.log("states.gameStarted, states.sequence, states.playerTurn",states.gameStarted, states.sequence, states.playerTurn);
-    }
-    
-  }
 
   const WEDGES = {
     colours: ['green', 'red', 'blue', 'yellow'],
@@ -153,6 +84,98 @@ document.addEventListener('DOMContentLoaded', function() {
       startRound();
     };
   }
+  
+  //test sequence
+  let sequence = ['red', 'green', 'blue'];
+  let index = 0;
+  var arr = ['html5', 'EDM', 'Coca Cola', 'creativity'];
+  playSeq = function(i) {
+    if (sequence[i]) {
+        WEDGES.lightup(sequence[i], SHORT_INTERVAL, null);
+        setTimeout(function(){playSeq(i+1);}, SHORT_INTERVAL);
+    }
+  }
+playSeq(0);
+
+  // buttons 
+  var start = document.getElementById('start'),
+    strict = document.getElementById('strict'),
+    strictIndicator = document.getElementById('strict-indicator'),
+    strictOn = false;
+  // set listeners on buttons
+  start.addEventListener('click', startPress, false);
+  strict.addEventListener('click', useStrict, false);
+
+  // button presses 
+  function buttonDown(button) {
+    button.classList.add('pressed');
+  }
+
+  function buttonUp(button) {
+    button.classList.remove('pressed');
+  }
+
+  // strict mode 
+  function useStrict() {
+    if (!strictOn) {
+      buttonDown(strict);
+      strictIndicator.classList.add('on');
+      strictOn = true;
+    } else {
+      buttonUp(strict);
+      strictIndicator.classList.remove('on');
+      strictOn = false;
+    }
+    console.log('strict status', strictOn);
+  }
+
+  // Initiates a game. 
+  function startPress() {
+    console.log('startPress');
+    let game = new Game();
+    game.start();
+  }
+
+  // Keeps track of game states
+  let states = {
+    gameStarted: false,
+    sequence: [],
+    playerTurn: false,
+    init() {
+      gameStarted = false;
+      sequence = [];
+      playerTurn = false;
+      console.log('states.init', gameStarted, sequence, playerTurn);
+    }
+  };
+  
+  function Round() {
+    //private methods
+    let end = () => {
+      console.log("round ended!");
+    },
+    // Generates a random number between 0 and 3.
+    randomColourIndex = () => {
+      return Math.floor(Math.random() * 3);
+    },
+    // Returns an array with random numbers between 0 and 3.
+    fillSequence = () => {
+      for (i = 0; i < MOVES; i++) {
+        states.sequence.push(WEDGES.colours[randomColourIndex()]);
+      }
+      console.log('sequence', arr)
+      return arr;
+    };
+    //public methods
+    this.start = () => {
+      console.log("round started!");
+      states.init();
+      fillSequence();
+      console.log("states.gameStarted, states.sequence, states.playerTurn",states.gameStarted, states.sequence, states.playerTurn);
+    }
+    
+  }
+
 
 }); // end DOMContentLoaded
 
