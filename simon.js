@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // global variables 
   const FLASH = 250,
     SHORT_INTERVAL = 1500,
-    LONG_INTERVAL = SHORT_INTERVAL * 1.5,
+    LONG_INTERVAL = SHORT_INTERVAL * 1.2,
     MOVES = 20;
 
   const WEDGES = {
@@ -67,6 +67,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Gets a wedge 
     getWedge(colour) {
       return document.getElementById(colour);
+    },
+    wedgeClick (e) {
+      incrementClicks();
+      var buttonColour = e.target.id;
+      lightup(buttonColour, FLASH, null);
+      console.log('wedgeClick():', buttonColour, 'was clicked', 'playerTurn', playerTurn);
+      if (playerTurn && pointInSequence <= currentStep) {
+        compareSequence(pointInSequence, buttonColour);
+      } else {
+        playerStop();
+        resetClicks();
+      }
     }
   }
 
@@ -85,18 +97,6 @@ document.addEventListener('DOMContentLoaded', function() {
     };
   }
   
-  //test sequence
-  let sequence = ['red', 'green', 'blue'];
-  let index = 0;
-  var arr = ['html5', 'EDM', 'Coca Cola', 'creativity'];
-  playSeq = function(i) {
-    if (sequence[i]) {
-        WEDGES.lightup(sequence[i], SHORT_INTERVAL, null);
-        setTimeout(function(){playSeq(i+1);}, SHORT_INTERVAL);
-    }
-  }
-playSeq(0);
-
   // buttons 
   var start = document.getElementById('start'),
     strict = document.getElementById('strict'),
@@ -146,34 +146,74 @@ playSeq(0);
       sequence = [];
       playerTurn = false;
       console.log('states.init', gameStarted, sequence, playerTurn);
+    },
+    // Generates a random number between 0 and 3.
+    randomColourIndex() {
+      return Math.floor(Math.random() * 3);
+    },
+    // Fills the sequence with a MOVES number of random indices of the wedge colours
+    fillSequence() {
+      for (i = 0; i < MOVES; i++) {
+        sequence.push(WEDGES.colours[this.randomColourIndex()]);
+      }
+      console.log('fillSequence()', sequence);
+      return sequence;
     }
   };
   
   function Round() {
+    //variables
+    let numStep = 1, 
+    numClicks = 0,
+    correct = true;
+    computerTurn = true;
     //private methods
     let end = () => {
       console.log("round ended!");
     },
-    // Generates a random number between 0 and 3.
-    randomColourIndex = () => {
-      return Math.floor(Math.random() * 3);
+    playerTurn = () => {
+      computerTurn = false;
+      WEDGES.openWedges();
     },
-    // Returns an array with random numbers between 0 and 3.
-    fillSequence = () => {
-      for (i = 0; i < MOVES; i++) {
-        states.sequence.push(WEDGES.colours[randomColourIndex()]);
+    playSequence = (i, arr) => {
+      if (arr[i]) {
+          WEDGES.lightup(arr[i], SHORT_INTERVAL, null);
+          setTimeout(function(){playSequence(i+1, arr);}, SHORT_INTERVAL + 200);
+      } else {
+        console.log('sequence played');
+        return playerTurn();
       }
-      console.log('sequence', arr)
-      return arr;
+    },
+    //TODO:
+    /*compareSequence = (pointInSequence, colour) => {
+      console.log('compareSequence', 'pointInSequence', pointInSequence, 'sequence', sequence, 'colour', colour);
+      //return colour == sequence[pointInSequence];
+      if (colour === sequence[pointInSequence]) {
+        console.log('compareSequence is returning true');
+        return true;
+      } else {
+        console.log('compareSequence is returning false');
+        return false;
+      }
+    },*/
+    incrementSteps = () => {
+      numStep++;
+      console.log('numSteps incremented to', numSteps);
     };
     //public methods
     this.start = () => {
       console.log("round started!");
       states.init();
-      fillSequence();
+      let fullSequence = states.fillSequence();
+      console.log('fullSequence', fullSequence);
       console.log("states.gameStarted, states.sequence, states.playerTurn",states.gameStarted, states.sequence, states.playerTurn);
+      let currentStepSequence = fullSequence.splice(0, numStep);
+      console.log('currentStepSequence', currentStepSequence);
+      playSequence(0, currentStepSequence);      
     }
-    
+    this.incrementClicks = () => {
+      pointInSequence++;
+    }
   }
 
 
