@@ -42,16 +42,16 @@ document.addEventListener('DOMContentLoaded', function() {
       for (let i = 0; i < this.colours.length; i++) {
         document.getElementById(this.colours[i]).classList.remove('closed');
         document.getElementById(this.colours[i]).classList.add('open');
-        document.getElementById(this.colours[i]).addEventListener('click', wedgeClick, false);
+        document.getElementById(this.colours[i]).addEventListener('click', this.wedgeClick, false);
       }
     },
     // Turns off listeners for wedges. 
     closeWedges() {
-      console.log('closeWedges(), playerTurn: ', playerTurn);
+      console.log('closeWedges(), playerTurn is: ', states.playerTurn);
       for (let i = 0; i < this.colours.length; i++) {
         document.getElementById(this.colours[i]).classList.remove('open');
         document.getElementById(this.colours[i]).classList.add('closed');
-        document.getElementById(this.colours[i]).removeEventListener('click', wedgeClick, false);
+        document.getElementById(this.colours[i]).removeEventListener('click', this.wedgeClick, false);
       }
     },
     // Lights up a wedge 
@@ -69,16 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
       return document.getElementById(colour);
     },
     wedgeClick (e) {
-      incrementClicks();
-      var buttonColour = e.target.id;
-      lightup(buttonColour, FLASH, null);
-      console.log('wedgeClick():', buttonColour, 'was clicked', 'playerTurn', playerTurn);
-      if (playerTurn && pointInSequence <= currentStep) {
-        compareSequence(pointInSequence, buttonColour);
-      } else {
-        playerStop();
-        resetClicks();
-      }
+      return stateModifiers.dealWithClick(e.target.id);
     }
   }
 
@@ -136,16 +127,28 @@ document.addEventListener('DOMContentLoaded', function() {
     game.start();
   }
 
-  // Keeps track of game states
+  // Game states and methods that modify them
   let states = {
     gameStarted: false,
+    //computer variables
     sequence: [],
+    currentStep: 1,  // where we are in the sequence
+    //player variables
     playerTurn: false,
+    numPlayerClicks: -1,
+    correct: true,
+    sequencePlayed:false,
+  }
+
+  let stateModifiers = {
     init() {
-      gameStarted = false;
-      sequence = [];
-      playerTurn = false;
-      console.log('states.init', gameStarted, sequence, playerTurn);
+      states.gameStarted = false;
+      states.sequence = [];
+      states.playerTurn = false;
+      states.currentStep = 1;
+      states.numPlayerClicks = -1;
+      states.correct = true;
+      console.log('states.init', states.gameStarted, states.sequence, states.playerTurn, states.currentStep, states.numPlayerClicks, states.correct);
     },
     // Generates a random number between 0 and 3.
     randomColourIndex() {
@@ -154,66 +157,97 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fills the sequence with a MOVES number of random indices of the wedge colours
     fillSequence() {
       for (i = 0; i < MOVES; i++) {
-        sequence.push(WEDGES.colours[this.randomColourIndex()]);
+        states.sequence.push(WEDGES.colours[this.randomColourIndex()]);
       }
-      console.log('fillSequence()', sequence);
-      return sequence;
-    }
-  };
-  
-  function Round() {
-    //variables
-    let numStep = 1, 
-    numClicks = 0,
-    correct = true;
-    computerTurn = true;
-    //private methods
-    let end = () => {
-      console.log("round ended!");
+      console.log('fillSequence(), states.sequence is:', states.sequence);
     },
-    playerTurn = () => {
-      computerTurn = false;
-      WEDGES.openWedges();
+    incrementClicks() {
+      states.numPlayerClicks++;
+      console.log('incrementClicks(), numPlayerClicks:', states.numPlayerClicks);
     },
-    playSequence = (i, arr) => {
-      if (arr[i]) {
-          WEDGES.lightup(arr[i], SHORT_INTERVAL, null);
-          setTimeout(function(){playSequence(i+1, arr);}, SHORT_INTERVAL + 200);
+    dealWithClick(colour) {     
+      //TODO: make this work! 
+      this.incrementClicks();
+      console.log('dealWithClick(), colour:', colour, 'states.numPlayerClicks: ', states.numPlayerClicks);
+      WEDGES.lightup(colour, FLASH, null);
+      this.compareSequence(colour);      
+      if (states.numPlayerClicks >= states.currentStep) {
+        this.resetClicks();
+        this.playerStop();
       } else {
-        console.log('sequence played');
-        return playerTurn();
+        //TODO: go to next step
       }
     },
-    //TODO:
-    /*compareSequence = (pointInSequence, colour) => {
-      console.log('compareSequence', 'pointInSequence', pointInSequence, 'sequence', sequence, 'colour', colour);
+    resetClicks() {
+      states.numPlayerClicks = -1;
+    },
+    compareSequence(colour) {    
+      console.log('compareSequence','sequence', states.sequence, 'colour', colour);
       //return colour == sequence[pointInSequence];
-      if (colour === sequence[pointInSequence]) {
+      if (colour === states.sequence[states.numPlayerClicks]) {
         console.log('compareSequence is returning true');
         return true;
       } else {
         console.log('compareSequence is returning false');
         return false;
       }
-    },*/
+    },
+    playerStop() {
+      this.setPlayerTurnState(false);
+    },
+    setSequencePlayedState (bool) {
+      console.log('setSequencePlayedState() with: ', bool);
+      states.sequencePlayed = bool;
+      if (bool) {
+        this.setPlayerTurnState(bool);
+      }
+    },
+    setPlayerTurnState(bool) {
+    console.log('setPlayerTurnState with:', bool);
+      states.playerTurn = bool;
+      if (bool) {
+        WEDGES.openWedges();        
+      } else {
+        WEDGES.closeWedges();
+      }
+      console.log('playerTurn()', states.playerTurn);
+    }    
+  };
+  
+  function Round() {        
+    //private methods
+    let end = () => {
+      console.log("round ended!");
+    },
+    playSequence = (i, arr) => {
+      stateModifiers.setSequencePlayedState(false);
+      if (arr[i]) {
+          WEDGES.lightup(arr[i], SHORT_INTERVAL, null);
+          setTimeout(function(){playSequence(i+1, arr);}, SHORT_INTERVAL + 200);
+      } else {
+        console.log('sequence played');
+        return stateModifiers.setSequencePlayedState(true);
+      }
+    },
     incrementSteps = () => {
-      numStep++;
-      console.log('numSteps incremented to', numSteps);
+      states.currentStep++;
+      console.log('currentSteps incremented to', currentSteps);
     };
     //public methods
     this.start = () => {
       console.log("round started!");
-      states.init();
-      let fullSequence = states.fillSequence();
-      console.log('fullSequence', fullSequence);
+      stateModifiers.init();
+      stateModifiers.fillSequence();
+      console.log('states.sequence after fillSequence() in Round.start()', states.sequence);
       console.log("states.gameStarted, states.sequence, states.playerTurn",states.gameStarted, states.sequence, states.playerTurn);
-      let currentStepSequence = fullSequence.splice(0, numStep);
+      let currentStepSequence = states.sequence.slice(0, states.currentStep);
       console.log('currentStepSequence', currentStepSequence);
-      playSequence(0, currentStepSequence);      
+      playSequence(0, currentStepSequence);
     }
+    /*
     this.incrementClicks = () => {
-      pointInSequence++;
-    }
+      states.numPlayerClicks++;
+    }*/
   }
 
 
@@ -373,16 +407,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }, speed);
       }, 
       /** Plays a sequence of coloured buttons 
-      /*plightuplaySequence = function(numSteps) {
-        console.log('playSequence(), numSteps', numSteps);
-        for (let i=0; i<numSteps; i++) {
+      /*plightuplaySequence = function(currentSteps) {
+        console.log('playSequence(), currentSteps', currentSteps);
+        for (let i=0; i<currentSteps; i++) {
           setTimeout(function() {
             lightup(sequence[i], SHORT_INTERVAL);
           }, LONG_INTERVAL * i);
         }
       }
-      playSequence = function(numSteps) {
-        console.log('playSequence(), numSteps', numSteps);
+      playSequence = function(currentSteps) {
+        console.log('playSequence(), currentSteps', currentSteps);
         lightup(sequence[0], SHORT_INTERVAL, flashed);
       },
       resetClicks = function() {
@@ -439,7 +473,7 @@ document.addEventListener('DOMContentLoaded', function() {
           playSequence(currentStep);
           // open wedges for player
           playerGo();
-          // fill player array with player's choices until array the same length as numsteps
+          // fill player array with player's choices until array the same length as currentSteps
           
           // test whole player array for correctness
           // if wrong: make currentStep = 1
