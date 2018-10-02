@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
     currentStep: 1,  // where we are in the sequence
     //player variables
     playerTurn: false,
-    numPlayerClicks: -1,
+    numPlayerClicks: 0,
     correct: true,
     sequencePlayed:false,
   }
@@ -150,6 +150,10 @@ document.addEventListener('DOMContentLoaded', function() {
       states.correct = true;
       console.log('states.init', states.gameStarted, states.sequence, states.playerTurn, states.currentStep, states.numPlayerClicks, states.correct);
     },
+    setCorrect(bool) {
+      states.correct = bool;
+      console.log('setCorrect(), states.correct:', states.correct);
+    },
     // Generates a random number between 0 and 3.
     randomColourIndex() {
       return Math.floor(Math.random() * 3);
@@ -162,35 +166,29 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('fillSequence(), states.sequence is:', states.sequence);
     },
     incrementClicks() {
-      states.numPlayerClicks++;
-      console.log('incrementClicks(), numPlayerClicks:', states.numPlayerClicks);
+      console.log('incrementClicks(), numPlayerClicks:', states.numPlayerClicks + 1);
+      return states.numPlayerClicks++;      
     },
     dealWithClick(colour) {     
       //TODO: make this work! 
-      this.incrementClicks();
       console.log('dealWithClick(), colour:', colour, 'states.numPlayerClicks: ', states.numPlayerClicks);
-      WEDGES.lightup(colour, FLASH, null);
-      this.compareSequence(colour);      
-      if (states.numPlayerClicks >= states.currentStep) {
+      WEDGES.lightup(colour, FLASH, stateModifiers.compareSequence(colour));
+      //this.compareSequence(colour);      
+      if (this.incrementClicks() < states.currentStep-2) {        
+        console.log('numPlayerClicks', states.numPlayerClicks, 'currentStep', states.currentStep);
+        // TODO: go to next step
+        console.log('need to go to next step now');
+      } else {
         this.resetClicks();
         this.playerStop();
-      } else {
-        //TODO: go to next step
       }
     },
     resetClicks() {
-      states.numPlayerClicks = -1;
+      states.numPlayerClicks = 0;
     },
     compareSequence(colour) {    
       console.log('compareSequence','sequence', states.sequence, 'colour', colour);
-      //return colour == sequence[pointInSequence];
-      if (colour === states.sequence[states.numPlayerClicks]) {
-        console.log('compareSequence is returning true');
-        return true;
-      } else {
-        console.log('compareSequence is returning false');
-        return false;
-      }
+      return this.setCorrect(colour === states.sequence[states.numPlayerClicks]);///FIX!!!
     },
     playerStop() {
       this.setPlayerTurnState(false);
@@ -244,10 +242,6 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('currentStepSequence', currentStepSequence);
       playSequence(0, currentStepSequence);
     }
-    /*
-    this.incrementClicks = () => {
-      states.numPlayerClicks++;
-    }*/
   }
 
 
