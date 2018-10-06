@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
     playerTurn: false,
     numPlayerClicks: 0,
     correct: true,
-    sequencePlayed:false,
+    //sequencePlayed:false,
   }
 
   let stateModifiers = {
@@ -170,11 +170,9 @@ document.addEventListener('DOMContentLoaded', function() {
       return states.numPlayerClicks++;      
     },
     dealWithClick(colour) {     
-      //TODO: make this work! 
       console.log('dealWithClick(), colour:', colour, 'states.numPlayerClicks: ', states.numPlayerClicks);
-      WEDGES.lightup(colour, FLASH, stateModifiers.compareSequence(colour));
-      //this.compareSequence(colour);      
-      if (this.incrementClicks() < states.currentStep-2) {        
+      WEDGES.lightup(colour, FLASH, stateModifiers.compareSequence(colour));      
+      if (this.incrementClicks() < states.currentStep-1) {        
         console.log('numPlayerClicks', states.numPlayerClicks, 'currentStep', states.currentStep);
         // TODO: go to next step
         console.log('need to go to next step now');
@@ -193,13 +191,13 @@ document.addEventListener('DOMContentLoaded', function() {
     playerStop() {
       this.setPlayerTurnState(false);
     },
-    setSequencePlayedState (bool) {
+    /*setSequencePlayedState (bool) {
       console.log('setSequencePlayedState() with: ', bool);
       states.sequencePlayed = bool;
       if (bool) {
         this.setPlayerTurnState(bool);
       }
-    },
+    },*/
     setPlayerTurnState(bool) {
     console.log('setPlayerTurnState with:', bool);
       states.playerTurn = bool;
@@ -218,13 +216,13 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log("round ended!");
     },
     playSequence = (i, arr) => {
-      stateModifiers.setSequencePlayedState(false);
+      stateModifiers.setPlayerTurnState(false);
       if (arr[i]) {
           WEDGES.lightup(arr[i], SHORT_INTERVAL, null);
           setTimeout(function(){playSequence(i+1, arr);}, SHORT_INTERVAL + 200);
       } else {
         console.log('sequence played');
-        return stateModifiers.setSequencePlayedState(true);
+        return stateModifiers.setPlayerTurnState(true);
       }
     },
     incrementSteps = () => {
