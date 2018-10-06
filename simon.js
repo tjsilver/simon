@@ -154,10 +154,6 @@ document.addEventListener('DOMContentLoaded', function() {
       states.correct = bool;
       console.log('setCorrect(), states.correct:', states.correct);
     },
-    // Generates a random number between 0 and 3.
-    randomColourIndex() {
-      return Math.floor(Math.random() * 3);
-    },
     incrementClicks() {
       console.log('incrementClicks(), numPlayerClicks:', states.numPlayerClicks + 1);
       return states.numPlayerClicks++;      
@@ -201,8 +197,12 @@ document.addEventListener('DOMContentLoaded', function() {
     let end = () => {
       console.log("round ended!");
     },
+    // Generates a random number between 0 and 3.
+    randomColourIndex = () => {
+      return Math.floor(Math.random() * 3);
+    },
     // Returns an array containing a MOVES number of random indices of the wedge colours
-    fillSequence() {
+    fillSequence = () => {
       let seq = [];
       for (i = 0; i < MOVES; i++) {
         seq.push(WEDGES.colours[this.randomColourIndex()]);
@@ -228,10 +228,10 @@ document.addEventListener('DOMContentLoaded', function() {
     this.start = () => {
       console.log("round started!");
       stateModifiers.init();
-      stateModifiers.fillSequence();
-      console.log('states.sequence after fillSequence() in Round.start()', states.sequence);
+      let sequence = fillSequence();
+      console.log('Round.sequence: ', sequence);
       console.log("states.gameStarted, states.sequence, states.playerTurn",states.gameStarted, states.sequence, states.playerTurn);
-      let currentStepSequence = states.sequence.slice(0, states.currentStep);
+      let currentStepSequence = sequence.slice(0, states.currentStep);
       console.log('currentStepSequence', currentStepSequence);
       playSequence(0, currentStepSequence);
     }
