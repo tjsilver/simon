@@ -47,7 +47,6 @@ document.addEventListener('DOMContentLoaded', function() {
     },
     // Turns off listeners for wedges. 
     closeWedges() {
-      console.log('closeWedges(), playerTurn is: ', states.playerTurn);
       for (let i = 0; i < this.colours.length; i++) {
         document.getElementById(this.colours[i]).classList.remove('open');
         document.getElementById(this.colours[i]).classList.add('closed');
@@ -134,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
     sequence: [],
     currentStep: 1,  // where we are in the sequence
     //player variables
-    playerTurn: false,
+    //playerTurn: false,
     numPlayerClicks: 0,
     correct: true,
     //sequencePlayed:false,
@@ -144,11 +143,10 @@ document.addEventListener('DOMContentLoaded', function() {
     init() {
       states.gameStarted = false;
       states.sequence = [];
-      states.playerTurn = false;
+      //states.playerTurn = false;
       states.currentStep = 1;
       states.numPlayerClicks = -1;
       states.correct = true;
-      console.log('states.init', states.gameStarted, states.sequence, states.playerTurn, states.currentStep, states.numPlayerClicks, states.correct);
     },
     setCorrect(bool) {
       states.correct = bool;
@@ -177,26 +175,30 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('compareSequence','sequence', states.sequence, 'colour', colour);
       return this.setCorrect(colour === states.sequence[states.numPlayerClicks]);///FIX!!!
     },
+    /*
     playerStop() {
       this.setPlayerTurnState(false);
     },
-    setPlayerTurnState(bool) {
-    console.log('setPlayerTurnState with:', bool);
-      states.playerTurn = bool;
-      if (bool) {
-        WEDGES.openWedges();        
-      } else {
-        WEDGES.closeWedges();
-      }
-      console.log('playerTurn()', states.playerTurn);
-    }    
+       */
   };
   
   function Round() {        
     //private methods
-    let end = () => {
+    let playerTurn = false,
+    wrong = false,
+    end = () => {
       console.log("round ended!");
     },
+    setPlayerTurnState = (bool) => {
+      console.log('setPlayerTurnState with:', bool);
+        playerTurn = bool;
+        /*if (bool) {
+          WEDGES.openWedges();        
+        } else {
+          WEDGES.closeWedges();
+        }*/
+        console.log('playerTurn()', playerTurn);
+    }, 
     // Generates a random number between 0 and 3.
     randomColourIndex = () => {
       return Math.floor(Math.random() * 3);
@@ -205,19 +207,25 @@ document.addEventListener('DOMContentLoaded', function() {
     fillSequence = () => {
       let seq = [];
       for (i = 0; i < MOVES; i++) {
-        seq.push(WEDGES.colours[this.randomColourIndex()]);
+        seq.push(WEDGES.colours[randomColourIndex()]);
       }
-      console.log('fillSequence(), seq:', seq);
       return seq;
     },
+    playerGo = (seq) => {
+      setPlayerTurnState(true);
+      WEDGES.openWedges();    
+    },
+    playerStop = () => {
+      setPlayerTurnState(false);
+      WEDGES.closeWedges(); 
+    }
     playSequence = (i, arr) => {
-      stateModifiers.setPlayerTurnState(false);
       if (arr[i]) {
           WEDGES.lightup(arr[i], SHORT_INTERVAL, null);
           setTimeout(function(){playSequence(i+1, arr);}, SHORT_INTERVAL + 200);
       } else {
         console.log('sequence played');
-        return stateModifiers.setPlayerTurnState(true);
+        return playerGo(arr);
       }
     },
     incrementSteps = () => {
@@ -230,7 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
       stateModifiers.init();
       let sequence = fillSequence();
       console.log('Round.sequence: ', sequence);
-      console.log("states.gameStarted, states.sequence, states.playerTurn",states.gameStarted, states.sequence, states.playerTurn);
+      console.log("states.gameStarted, states.sequence, playerTurn",states.gameStarted, states.sequence, playerTurn);
       let currentStepSequence = sequence.slice(0, states.currentStep);
       console.log('currentStepSequence', currentStepSequence);
       playSequence(0, currentStepSequence);
