@@ -158,13 +158,6 @@ document.addEventListener('DOMContentLoaded', function() {
     randomColourIndex() {
       return Math.floor(Math.random() * 3);
     },
-    // Fills the sequence with a MOVES number of random indices of the wedge colours
-    fillSequence() {
-      for (i = 0; i < MOVES; i++) {
-        states.sequence.push(WEDGES.colours[this.randomColourIndex()]);
-      }
-      console.log('fillSequence(), states.sequence is:', states.sequence);
-    },
     incrementClicks() {
       console.log('incrementClicks(), numPlayerClicks:', states.numPlayerClicks + 1);
       return states.numPlayerClicks++;      
@@ -191,13 +184,6 @@ document.addEventListener('DOMContentLoaded', function() {
     playerStop() {
       this.setPlayerTurnState(false);
     },
-    /*setSequencePlayedState (bool) {
-      console.log('setSequencePlayedState() with: ', bool);
-      states.sequencePlayed = bool;
-      if (bool) {
-        this.setPlayerTurnState(bool);
-      }
-    },*/
     setPlayerTurnState(bool) {
     console.log('setPlayerTurnState with:', bool);
       states.playerTurn = bool;
@@ -214,6 +200,15 @@ document.addEventListener('DOMContentLoaded', function() {
     //private methods
     let end = () => {
       console.log("round ended!");
+    },
+    // Returns an array containing a MOVES number of random indices of the wedge colours
+    fillSequence() {
+      let seq = [];
+      for (i = 0; i < MOVES; i++) {
+        seq.push(WEDGES.colours[this.randomColourIndex()]);
+      }
+      console.log('fillSequence(), seq:', seq);
+      return seq;
     },
     playSequence = (i, arr) => {
       stateModifiers.setPlayerTurnState(false);
@@ -245,250 +240,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
 }); // end DOMContentLoaded
 
-
-
-    /* buttons 
-  var start = document.getElementById('start'),
-    strict = document.getElementById('strict'),
-    strictIndicator = document.getElementById('strict-indicator'),
-    strictOn = false,
-    stepStarted = false;
-
-  /* global variables 
-  const FLASH = 250,
-    SHORT_INTERVAL = 1500,
-    LONG_INTERVAL = SHORT_INTERVAL * 1.5,
-    WEDGES = ['green', 'red', 'blue', 'yellow'],
-    MOVES = 20;
-
-  /* set listeners 
-  start.addEventListener('click', startPress, false);
-  strict.addEventListener('click', useStrict, false);
-
-  /* button presses 
-  function buttonDown(el) {
-    el.classList.add('pressed');
-  }
-
-  function buttonUp(el) {
-    el.classList.remove('pressed');
-  }
-
-  /* strict mode 
-  function useStrict() {
-    if (!strictOn) {
-      buttonDown(strict);
-      strictIndicator.classList.add('on');
-      strictOn = true;
-    } else {
-      buttonUp(strict);
-      strictIndicator.classList.remove('on');
-      strictOn = false;
-    }
-    console.log('strict status', strictOn);
-  }
-
-  /** Initiates a game. 
-  function startPress() {
-    console.log('startPress');
-    buttonDown(start);
-    //timer then buttonup
-    setTimeout(function() {
-      buttonUp(start);
-    }, 250);
-    newgame = new Game();
-    newgame.start()
-  }
-  /** Wedge functions. 
-  function Wedge() {
-    //Todo: move wedge functions here 
-  }
-  /**
-   * Represents a game of Simon.
-   
-  function Game() {
-    /* private 
-    var gameStarted = false,
-      //hasFlashed = false,
-      playerTurn = false,
-      sequence = [],
-      //playerArr = [],
-      // set number of steps to 1
-      currentStep = 1,
-      pointInSequence = -1,
-      playerMoves = 0,
-      playerGo = () => {
-        startPlayerTurn();
-        openWedges();
-        return true;
-      },
-      playerStop = () => {
-        closeWedges();
-        endPlayerTurn();
-        console.log('playerStop, playerTurn:', playerTurn);
-      }
-      /** Turns on listeners for wedges. 
-      openWedges = function() {
-        console.log('openWedges()');
-        for (let i = 0; i < WEDGES.length; i++) {
-          document.getElementById(WEDGES[i]).classList.remove('closed');
-          document.getElementById(WEDGES[i]).classList.add('open');
-          document.getElementById(WEDGES[i]).addEventListener('click', wedgeClick, false);
-        }
-        /*
-        setTimeout(function() {
-          playerStop();
-        }, LONG_INTERVAL * currentStep);
-      },
-      /** Turns off listeners for wedges. 
-      closeWedges = function() {
-        console.log('closeWedges(), playerTurn: ', playerTurn);
-        for (let i = 0; i < WEDGES.length; i++) {
-          document.getElementById(WEDGES[i]).classList.remove('open');
-          document.getElementById(WEDGES[i]).classList.add('closed');
-          document.getElementById(WEDGES[i]).removeEventListener('click', wedgeClick, false);
-        }
-      },
-      /** Generates a random number between 0 and 3.
-      randomColourIndex = function() {
-        return Math.floor(Math.random() * 3);
-      },
-      /** Returns an array with random numbers between 0 and 3.
-      fillSequence = function() {
-        arr = []
-        for (i = 0; i < MOVES; i++) {
-          arr.push(WEDGES[randomColourIndex()]);
-        }
-        console.log('sequence', arr)
-        return arr;
-      },
-      /** Resets the game.
-      resetGame = function() {
-        console.log('Game resetGame');
-        gameStarted = false;
-        sequence = fillSequence();
-        resetPlayerMoves();
-        return true;
-      },
-      /** Lights up a wedge 
-      brighten = function(wedge) {
-        wedge.classList.add('light');
-        wedge.classList.remove('dark');
-      },
-      /** Dims a wedge 
-      dim = (wedge) => {
-        wedge.classList.add('dark');
-        wedge.classList.remove('light');        
-      },
-      /** Gets a wedge 
-      getWedge = (colour) => {
-        return document.getElementById(colour);
-      },
-      
-      flashed = function() {
-        hasFlashed = true;
-      },
-      /** Causes a wedge of specified colour to brighten and then dim 
-      lightup = (colour, speed, func) => {
-        console.log('lightup');
-        let wedge = getWedge(colour);
-        brighten(wedge);
-        setTimeout(function() {
-          dim(wedge);
-          func ? func() : null;
-        }, speed);
-      }, 
-      /** Plays a sequence of coloured buttons 
-      /*plightuplaySequence = function(currentSteps) {
-        console.log('playSequence(), currentSteps', currentSteps);
-        for (let i=0; i<currentSteps; i++) {
-          setTimeout(function() {
-            lightup(sequence[i], SHORT_INTERVAL);
-          }, LONG_INTERVAL * i);
-        }
-      }
-      playSequence = function(currentSteps) {
-        console.log('playSequence(), currentSteps', currentSteps);
-        lightup(sequence[0], SHORT_INTERVAL, flashed);
-      },
-      resetClicks = function() {
-        pointInSequence = -1;
-      },
-      incrementClicks = function() {
-        pointInSequence++;
-      },
-      wedgeClick = function(e) {
-        incrementClicks();
-        var buttonColour = e.target.id;
-        lightup(buttonColour, FLASH, null);
-        console.log('wedgeClick():', buttonColour, 'was clicked', 'playerTurn', playerTurn);
-        if (playerTurn && pointInSequence <= currentStep) {
-          compareSequence(pointInSequence, buttonColour);
-        } else {
-          playerStop();
-          resetClicks();
-        }
-      },
-      compareSequence = function(pointInSequence, colour) {
-        console.log('compareSequence', 'pointInSequence', pointInSequence, 'sequence', sequence, 'colour', colour);
-        //return colour == sequence[pointInSequence];
-        if (colour === sequence[pointInSequence]) {
-          console.log('compareSequence is returning true');
-          return true;
-        } else {
-          console.log('compareSequence is returning false');
-          return false;
-        }
-      },
-      addStep = function() {
-        currentStep++;
-        console.log('addStep, currentStep: ', currentStep);
-      },
-      endPlayerTurn = () => {
-        playerTurn = false;
-      },
-      startPlayerTurn = () => {
-        playerTurn = true;
-      },
-      incrementPlayerMoves = () => {
-        playerMoves++;
-      },
-      resetPlayerMoves = () => {
-        playerMoves = 0;
-      },
-      playRound = function() {
-        // set player turn to false
-        playerTurn = false;
-        // play sequence up to currentStep
-        for (let i=0; i<currentStep; i++) {
-          // play sequence up to currentStep
-          playSequence(currentStep);
-          // open wedges for player
-          playerGo();
-          // fill player array with player's choices until array the same length as currentSteps
-          
-          // test whole player array for correctness
-          // if wrong: make currentStep = 1
-          // else: add another step and play sequence again
-        } // end for
-      },
-      endRound = function() {
-        //reset round to beginning
-      },
-      /** Plays a game of Simon 
-      playGame = function() {
-        playerArr = []
-        gameStarted = true;
-        playRound();
-        // end game
-        if (currentStep == MOVES) {
-          gameStarted = false;
-        }
-      }; // end playGame
-    /* public functions 
-    this.start = function() {
-      console.log('****** new Game started');
-      resetGame();
-      playGame();
-    }; // end start()
-  }; // end Game class*/
