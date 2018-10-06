@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return document.getElementById(colour);
       },
       wedgeClick (e) {
-        return dealWithClick(e.target.id);
+        return stateModifiers.dealWithClick(e.target.id);
       },       
       // Generates a random number between 0 and 3.
       randomColourIndex() {
@@ -150,6 +150,10 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('incrementClicks(), numPlayerClicks:', states.numPlayerClicks + 1);
       return states.numPlayerClicks++;      
     },
+    incrementStep() {
+      states.currentStep++;
+      console.log('currentStep incremented to', states.currentStep);
+    },   
     // Returns an array containing a MOVES number of random indices of the wedge colours
     fillSequence() {
       for (i = 0; i < MOVES; i++) {
@@ -160,6 +164,54 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('setPlayerTurnState with:', bool);
         return states.playerTurn = bool;
         console.log('states.playerTurn()', states.playerTurn);
+    },
+    resetPlayerClicks() {
+      console.log('resetPlayerClicks');
+      return states.numPlayerClicks = 0;
+    },
+    compareSequence(colour) {    
+      console.log('compareSequence','states.currentStepSequence', states.currentStepSequence, 'colour', colour, 'numPlayerClicks', states.numPlayerClicks, 'currentStepSequence.length', states.currentStepSequence.length);
+      if (colour === states.currentStepSequence[states.numPlayerClicks-1]) {
+        console.log('compareSequence is returning true');
+        return this.nextStep(true);
+      }
+      console.log('compareSequence is returning false');
+      return this.nextStep(false);
+    },
+    dealWithClick(colour) {
+      console.log('dealing with click', colour); 
+      this.incrementClicks();
+      this.compareSequence(colour);
+    },
+    nextStep (bool) {
+      // do this!!
+      if (bool) {
+        // do the next thing
+          this.incrementStep();
+          this.playSequence(0, states.currentStepSequence);
+        } else {
+        // start playing sequence from beginning
+        this.resetPlayerClicks();
+      }
+    },
+    playerStop () {
+      console.log('playerStop');
+      WEDGES.closeWedges(); 
+      return this.setPlayerTurnState(false);
+    },
+    playerGo() {
+      console.log('playerGo');
+      WEDGES.openWedges();    
+      return this.setPlayerTurnState(true);
+    },
+    playSequence (i, arr) {
+      if (arr[i]) {
+          WEDGES.lightup(arr[i], SHORT_INTERVAL, null);
+          setTimeout(function(){stateModifiers.playSequence(i+1, arr);}, SHORT_INTERVAL + 200);
+      } else {
+        console.log('sequence played, returning playerGo');
+        return this.playerGo();
+      }
     }
   };
   
@@ -169,39 +221,6 @@ document.addEventListener('DOMContentLoaded', function() {
     wrong = false,
     end = () => {
       console.log("round ended!");
-    },
-    playerGo = () => {
-      WEDGES.openWedges();    
-      return stateModifiers.setPlayerTurnState(true);
-    },
-    playerStop = () => {
-      WEDGES.closeWedges(); 
-      return stateModifiers.setPlayerTurnState(false);
-    }
-    playSequence = (i, arr) => {
-      if (arr[i]) {
-          WEDGES.lightup(arr[i], SHORT_INTERVAL, null);
-          setTimeout(function(){playSequence(i+1, arr);}, SHORT_INTERVAL + 200);
-      } else {
-        console.log('sequence played, returning playerGo');
-        return playerGo(arr);
-      }
-    },
-    incrementSteps = () => {
-      states.currentStep++;
-      console.log('currentSteps incremented to', currentSteps);
-    },
-   
-    resetClicks = () => {
-      states.numPlayerClicks = 0;
-    },
-    compareSequence = (colour) => {    
-      console.log('compareSequence','sequence', states.sequence, 'colour', colour);
-    },
-    dealWithClick = (colour) => {
-      console.log('dealing with click', colour); 
-      stateModifiers.incrementClicks();
-      compareSequence(colour);
     };
     //public methods
     this.start = () => {
@@ -210,9 +229,9 @@ document.addEventListener('DOMContentLoaded', function() {
       stateModifiers.fillSequence();
       console.log('Round.sequence: ', states.sequence);
       console.log("states.gameStarted, states.sequence, playerTurn",states.gameStarted, states.sequence, playerTurn);
-      let currentStepSequence = states.sequence.slice(0, states.currentStep);
-      console.log('currentStepSequence', currentStepSequence);
-      playSequence(0, currentStepSequence);
+      states.currentStepSequence = states.sequence.slice(0, states.currentStep);
+      console.log('currentStepSequence', states.currentStepSequence);
+      stateModifiers.playSequence(0, states.currentStepSequence);
     }
   }
 
