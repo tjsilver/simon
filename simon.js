@@ -211,13 +211,13 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       return seq;
     },
-    playerGo = (seq) => {
-      setPlayerTurnState(true);
+    playerGo = () => {
       WEDGES.openWedges();    
+      return setPlayerTurnState(true);
     },
     playerStop = () => {
-      setPlayerTurnState(false);
       WEDGES.closeWedges(); 
+      return setPlayerTurnState(false);
     }
     playSequence = (i, arr) => {
       if (arr[i]) {
