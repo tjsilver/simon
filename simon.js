@@ -83,6 +83,19 @@ document.addEventListener('DOMContentLoaded', function() {
       randomColourIndex() {
         return Math.floor(Math.random() * 3);
       }
+    },
+    DISPLAY = {
+      /*
+      flash () {
+        console.log('flash');
+        this.displayText('--');
+        setTimeout(function() {
+          DISPLAY.displayText('');
+        }, 100);
+      },*/
+      displayText(txt) {
+        document.getElementById('display').innerHTML = txt;
+      }
     };
     
     
@@ -200,13 +213,13 @@ document.addEventListener('DOMContentLoaded', function() {
       states.playerTurn = false;
       states.currentStep = 0;
       states.numPlayerClicks = 0;
-      states.correct = true;
+      //states.correct = true;
       states.currentStepSequence = [];
-    },
+    },/*
     setCorrect(bool) {
       states.correct = bool;
       console.log('setCorrect(), states.correct:', states.correct);
-    },
+    },*/
     incrementClicks() {
       console.log('incrementClicks(), numPlayerClicks:', states.numPlayerClicks + 1);
       return states.numPlayerClicks++;      
@@ -252,20 +265,16 @@ document.addEventListener('DOMContentLoaded', function() {
     addStepPlaySequence() {
       stateModifiers.addStep();
       console.log('currentStep incremented to', states.currentStep, states.currentStepSequence);
+      DISPLAY.displayText(states.currentStep); // FIX THIS SO THAT IT GOES BACK TO 1 IF PLAYER MAKES MISTAKE ON NON-STRICT
       this.playSequence(0, states.currentStepSequence);
     },  
   }
   
-  function Round() {        
-    //private methods
-    /*let playerTurn = false,
-    wrong = false,
-    end = () => {
-      console.log("round ended!");
-    };*/
+  function Round() {    
     //public methods
     this.start = () => {
       console.log("round started!");
+      DISPLAY.displayText('--');
       stateModifiers.initRound();
       stateModifiers.fillSequence();
       console.log('Round.sequence: ', states.sequence);
