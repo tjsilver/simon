@@ -73,15 +73,32 @@ document.addEventListener('DOMContentLoaded', function() {
       randomColourIndex() {
         return Math.floor(Math.random() * 3);
       }
-  }
+    };
+    
 
-  
-  // buttons 
-  var start = document.getElementById('start'),
-    strict = document.getElementById('strict'),
-    strictIndicator = document.getElementById('strict-indicator');
+  // buttons
+    const start = getButton('start'),
+      strict = getButton('strict'),
+      strictIndicator = getButton('strict-indicator');
+    
+    function getButton(button) {
+      return document.getElementById(button);
+    }
 
-  // set listeners on buttons
+    function buttonDown(button) {
+      button.classList.add('pressed');
+    }
+
+    function buttonUp(button) {
+      button.classList.remove('pressed');
+    }
+
+    function setButtonListeners() {
+      this.start.addEventListener('click', startPress, false);
+      this.strict.addEventListener('click', useStrict, false);
+    }
+
+  /*// set listeners on buttons
   start.addEventListener('click', startPress, false);
   strict.addEventListener('click', useStrict, false);
 
@@ -92,9 +109,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function buttonUp(button) {
     button.classList.remove('pressed');
-  }
+  }*/
 
-  // strict mode 
+  // strict mode
   function useStrict() {
     if (!states.strict) {
       buttonDown(strict);
@@ -275,5 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
       startRound();
     };
   }
+
+  setButtonListeners();
 }); // end DOMContentLoaded
 
