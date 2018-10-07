@@ -25,11 +25,21 @@ document.addEventListener('DOMContentLoaded', function() {
     MOVES = 3, //20,
     WEDGES = {
       colours: ['green', 'red', 'blue', 'yellow'],
+      sounds: {
+        green: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound1.mp3'), 
+        red: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound2.mp3'), 
+        blue: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound3.mp3'),
+        yellow: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound4.mp3')
+      },
+      playsound(colour) {
+        this.sounds[colour].play();
+      },
       // Causes a wedge of specified colour to brighten and then dim 
       lightup (colour, speed, func) {
         console.log('lightup');
         let wedge = this.getWedge(colour);
         this.brighten(wedge);
+        this.playsound(colour);
         setTimeout(function() {
           WEDGES.dim(wedge);
           func ? func() : null;
@@ -75,6 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     };
     
+    
 
   // buttons
     const start = getButton('start'),
@@ -97,19 +108,6 @@ document.addEventListener('DOMContentLoaded', function() {
       this.start.addEventListener('click', startPress, false);
       this.strict.addEventListener('click', useStrict, false);
     }
-
-  /*// set listeners on buttons
-  start.addEventListener('click', startPress, false);
-  strict.addEventListener('click', useStrict, false);
-
-  // button presses 
-  function buttonDown(button) {
-    button.classList.add('pressed');
-  }
-
-  function buttonUp(button) {
-    button.classList.remove('pressed');
-  }*/
 
   // strict mode
   function useStrict() {
