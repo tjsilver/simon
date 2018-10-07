@@ -133,28 +133,30 @@ document.addEventListener('DOMContentLoaded', function() {
   let player = {
     dealWithClick(colour) {
       console.log('dealing with click', colour); 
+      WEDGES.lightup(colour, FLASH, null);
       stateModifiers.incrementClicks();
-      this.compareSequence(colour);
+      this.compareColours(colour);
     },
-    compareSequence(colour) {    
-      console.log('compareSequence','states.currentStepSequence', states.currentStepSequence, 'colour', colour, 'numPlayerClicks', states.numPlayerClicks, 'currentStepSequence.length', states.currentStepSequence.length);
-      if (colour === states.currentStepSequence[states.numPlayerClicks-1]) {
-        console.log('compareSequence is returning true');
+    compareColours(colour) {    
+      console.log('compareColours','states.currentStepSequence', states.currentStepSequence, 'colour', colour, 'numPlayerClicks', states.numPlayerClicks, 'currentStepSequence.length', states.currentStepSequence.length);
+      if (colour === states.currentStepSequence[states.numPlayerClicks-1]) { // colours match?
+        console.log('compareColours is returning true');
         return this.nextStep(true);
       }
-      console.log('compareSequence is returning false');
+      console.log('compareColours is returning false');
       return this.nextStep(false);
     },
     nextStep (bool) {
-      // do this!!
-      if (bool) {
-        if (states.numPlayerClicks === states.currentStep) {
+      if (bool) { // colours matched on last test
+        if (states.numPlayerClicks === states.currentStep) { // max number of clicks reached
           this.playerStop();
-          computer.addStepPlaySequence();
-        } else {
-        // start playing sequence from beginning
-        stateModifiers.resetPlayerClicks();
-        }
+          setTimeout(function(){computer.addStepPlaySequence();}, LONG_INTERVAL);
+        } 
+      } else {
+        //colours didn't match, so play sequence from beginning
+        this.playerStop();
+        stateModifiers.resetStep();
+        setTimeout(function(){computer.addStepPlaySequence();}, LONG_INTERVAL);
       }
     },
     playerStop () {
@@ -164,7 +166,8 @@ document.addEventListener('DOMContentLoaded', function() {
     },
     playerGo() {
       console.log('playerGo');
-      WEDGES.openWedges();    
+      WEDGES.openWedges();
+      stateModifiers.resetPlayerClicks();   
       return stateModifiers.setPlayerTurnState(true);
     }
   }
@@ -203,7 +206,6 @@ document.addEventListener('DOMContentLoaded', function() {
     setPlayerTurnState(bool){
       console.log('setPlayerTurnState with:', bool);
         return states.playerTurn = bool;
-        console.log('states.playerTurn()', states.playerTurn);
     },
     resetPlayerClicks() {
       console.log('resetPlayerClicks');
