@@ -145,6 +145,28 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('compareSequence is returning false');
       return this.nextStep(false);
     },
+    nextStep (bool) {
+      // do this!!
+      if (bool) {
+        if (states.numPlayerClicks === states.currentStep) {
+          this.playerStop();
+          computer.addStepPlaySequence();
+        } else {
+        // start playing sequence from beginning
+        stateModifiers.resetPlayerClicks();
+        }
+      }
+    },
+    playerStop () {
+      console.log('playerStop');
+      WEDGES.closeWedges(); 
+      return stateModifiers.setPlayerTurnState(false);
+    },
+    playerGo() {
+      console.log('playerGo');
+      WEDGES.openWedges();    
+      return stateModifiers.setPlayerTurnState(true);
+    }
   }
   // Game states and methods that modify them
   let states = {
@@ -155,9 +177,10 @@ document.addEventListener('DOMContentLoaded', function() {
       states.gameStarted = false;
       states.sequence = [];
       states.playerTurn = false;
-      states.currentStep = 1;
+      states.currentStep = 0;
       states.numPlayerClicks = 0;
       states.correct = true;
+      states.currentStepSequence = [];
     },
     setCorrect(bool) {
       states.correct = bool;
@@ -167,10 +190,10 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('incrementClicks(), numPlayerClicks:', states.numPlayerClicks + 1);
       return states.numPlayerClicks++;      
     },
-    incrementStep() {
+    addStep() {
       states.currentStep++;
-      console.log('currentStep incremented to', states.currentStep);
-    },   
+      this.setCurrentStepSequence();
+    }, 
     // Returns an array containing a MOVES number of random indices of the wedge colours
     fillSequence() {
       for (i = 0; i < MOVES; i++) {
@@ -186,37 +209,32 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('resetPlayerClicks');
       return states.numPlayerClicks = 0;
     },
-    nextStep (bool) {
-      // do this!!
-      if (bool) {
-        // do the next thing
-          this.incrementStep();
-          this.playSequence(0, states.currentStepSequence);
-        } else {
-        // start playing sequence from beginning
-        this.resetPlayerClicks();
-      }
+    resetStep() {
+      states.currentStep = 0;
+      return this.setCurrentStepSequence();
     },
-    playerStop () {
-      console.log('playerStop');
-      WEDGES.closeWedges(); 
-      return this.setPlayerTurnState(false);
-    },
-    playerGo() {
-      console.log('playerGo');
-      WEDGES.openWedges();    
-      return this.setPlayerTurnState(true);
-    },
+    setCurrentStepSequence() {
+      return states.currentStepSequence = states.sequence.slice(0, states.currentStep);
+    }
+  };
+
+  // Computer functions
+  let computer = {
     playSequence (i, arr) {
       if (arr[i]) {
           WEDGES.lightup(arr[i], SHORT_INTERVAL, null);
-          setTimeout(function(){stateModifiers.playSequence(i+1, arr);}, SHORT_INTERVAL + 200);
+          setTimeout(function(){computer.playSequence(i+1, arr);}, SHORT_INTERVAL + 200);
       } else {
         console.log('sequence played, returning playerGo');
-        return this.playerGo();
+        return player.playerGo();
       }
-    }
-  };
+    },
+    addStepPlaySequence() {
+      stateModifiers.addStep();
+      console.log('currentStep incremented to', states.currentStep, states.currentStepSequence);
+      this.playSequence(0, states.currentStepSequence);
+    },  
+  }
   
   function Round() {        
     //private methods
@@ -232,9 +250,9 @@ document.addEventListener('DOMContentLoaded', function() {
       stateModifiers.fillSequence();
       console.log('Round.sequence: ', states.sequence);
       console.log("states.gameStarted, states.sequence, playerTurn",states.gameStarted, states.sequence, playerTurn);
-      states.currentStepSequence = states.sequence.slice(0, states.currentStep);
+      computer.addStepPlaySequence();
       console.log('currentStepSequence', states.currentStepSequence);
-      stateModifiers.playSequence(0, states.currentStepSequence);
+      
     }
   }
 
