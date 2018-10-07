@@ -93,8 +93,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // buttons 
   var start = document.getElementById('start'),
     strict = document.getElementById('strict'),
-    strictIndicator = document.getElementById('strict-indicator'),
-    strictOn = false;
+    strictIndicator = document.getElementById('strict-indicator');
+
   // set listeners on buttons
   start.addEventListener('click', startPress, false);
   strict.addEventListener('click', useStrict, false);
@@ -110,16 +110,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // strict mode 
   function useStrict() {
-    if (!strictOn) {
+    if (!states.strict) {
       buttonDown(strict);
       strictIndicator.classList.add('on');
-      strictOn = true;
+      states.strict = true;
     } else {
       buttonUp(strict);
       strictIndicator.classList.remove('on');
-      strictOn = false;
+      states.strict = false;
     }
-    console.log('strict status', strictOn);
+    console.log('strict status', states.strict);
   }
 
   // Initiates a game. 
@@ -152,8 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
           this.playerStop();
           setTimeout(function(){computer.addStepPlaySequence();}, LONG_INTERVAL);
         } 
-      } else {
-        //colours didn't match, so play sequence from beginning
+      } else { //colours didn't match, so play sequence from beginning
         this.playerStop();
         stateModifiers.resetStep();
         setTimeout(function(){computer.addStepPlaySequence();}, LONG_INTERVAL);
@@ -173,11 +172,12 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   // Game states and methods that modify them
   let states = {
+    strict = false;
   }
 
   let stateModifiers = {
     init() {
-      states.gameStarted = false;
+      states.gameStarted = false; // do we need this?
       states.sequence = [];
       states.playerTurn = false;
       states.currentStep = 0;
