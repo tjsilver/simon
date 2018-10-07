@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const FLASH = 250,
     SHORT_INTERVAL = 1500,
     LONG_INTERVAL = SHORT_INTERVAL * 1.2,
-    MOVES = 5, //20,
+    MOVES = 3, //20,
     WEDGES = {
       colours: ['green', 'red', 'blue', 'yellow'],
       // Causes a wedge of specified colour to brighten and then dim 
@@ -75,20 +75,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
   }
 
-  function Game() {
-    // private methods
-    let startRound = () => {
-      let round = new Round();
-      round.start();
-    };
-    // public methods
-    this.start = () => {
-      console.log("game started");
-      states.gameStarted = true;
-      console.log('states.gameStarted:', states.gameStarted);    
-      startRound();
-    };
-  }
   
   // buttons 
   var start = document.getElementById('start'),
@@ -147,22 +133,26 @@ document.addEventListener('DOMContentLoaded', function() {
       return this.nextStep(false);
     },
     nextStep (bool) {
-      if (bool) { // colours matched on last test
-        if (states.numPlayerClicks === states.currentStep) { // max number of clicks reached
+      if (bool && states.gameOn) { // colours matched on last test
+        if (states.numPlayerClicks === MOVES) { // player has won! 
+          stateModifiers.turnGameOff();
+          this.playerStop();
+          // display that player has won TODO
+          console.log('YOU WON!!')
+        } else if (states.numPlayerClicks === states.currentStep) { // max number of clicks reached
           this.playerStop();
           setTimeout(function(){computer.addStepPlaySequence();}, LONG_INTERVAL);
         } 
       } else { //colours didn't match, so play sequence from beginning or start new sequence if strict
         this.playerStop();
-        stateModifiers.resetStep();
-        if (states.strict) {
+        if (states.strict) { //strict mode is on so start a new round and sequence
           setTimeout(function(){
             round = new Round();
             round.start();
           }, LONG_INTERVAL);
           
-        } else {
-          setTimeout(function(){computer.addStepPlaySequence();}, LONG_INTERVAL);
+        } else { // play up to the currentstep again
+          setTimeout(function(){computer.playSequence(0, states.currentStepSequence);}, LONG_INTERVAL);
         }        
       }
     },
@@ -184,8 +174,13 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   let stateModifiers = {
-    init() {
-      states.gameStarted = false; // do we need this?
+    turnGameOn(){
+      states.gameOn = true;
+    },
+    turnGameOff() {
+      states.gameOn = false;
+    },
+    initRound() {
       states.sequence = [];
       states.playerTurn = false;
       states.currentStep = 0;
@@ -248,24 +243,37 @@ document.addEventListener('DOMContentLoaded', function() {
   
   function Round() {        
     //private methods
-    let playerTurn = false,
+    /*let playerTurn = false,
     wrong = false,
     end = () => {
       console.log("round ended!");
-    };
+    };*/
     //public methods
     this.start = () => {
       console.log("round started!");
-      stateModifiers.init();
+      stateModifiers.initRound();
       stateModifiers.fillSequence();
       console.log('Round.sequence: ', states.sequence);
-      console.log("states.gameStarted, states.sequence, playerTurn",states.gameStarted, states.sequence, playerTurn);
+      console.log("states.gameOn, states.sequence, playerTurn",states.gameOn, states.sequence, states.playerTurn);
       computer.addStepPlaySequence();
       console.log('currentStepSequence', states.currentStepSequence);
       
     }
   }
 
-
+  function Game() {
+    // private methods
+    let startRound = () => {
+      let round = new Round();
+      round.start();
+    };
+    // public methods
+    this.start = () => {
+      console.log("game started");
+      stateModifiers.turnGameOn();
+      console.log('states.gameOn:', states.gameOn);    
+      startRound();
+    };
+  }
 }); // end DOMContentLoaded
 
