@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return document.getElementById(colour);
       },
       wedgeClick (e) {
-        return stateModifiers.dealWithClick(e.target.id);
+        return player.dealWithClick(e.target.id);
       },       
       // Generates a random number between 0 and 3.
       randomColourIndex() {
@@ -129,6 +129,23 @@ document.addEventListener('DOMContentLoaded', function() {
     game.start();
   }
 
+  // Functions that deal with the player clicks
+  let player = {
+    dealWithClick(colour) {
+      console.log('dealing with click', colour); 
+      stateModifiers.incrementClicks();
+      this.compareSequence(colour);
+    },
+    compareSequence(colour) {    
+      console.log('compareSequence','states.currentStepSequence', states.currentStepSequence, 'colour', colour, 'numPlayerClicks', states.numPlayerClicks, 'currentStepSequence.length', states.currentStepSequence.length);
+      if (colour === states.currentStepSequence[states.numPlayerClicks-1]) {
+        console.log('compareSequence is returning true');
+        return this.nextStep(true);
+      }
+      console.log('compareSequence is returning false');
+      return this.nextStep(false);
+    },
+  }
   // Game states and methods that modify them
   let states = {
   }
@@ -168,20 +185,6 @@ document.addEventListener('DOMContentLoaded', function() {
     resetPlayerClicks() {
       console.log('resetPlayerClicks');
       return states.numPlayerClicks = 0;
-    },
-    compareSequence(colour) {    
-      console.log('compareSequence','states.currentStepSequence', states.currentStepSequence, 'colour', colour, 'numPlayerClicks', states.numPlayerClicks, 'currentStepSequence.length', states.currentStepSequence.length);
-      if (colour === states.currentStepSequence[states.numPlayerClicks-1]) {
-        console.log('compareSequence is returning true');
-        return this.nextStep(true);
-      }
-      console.log('compareSequence is returning false');
-      return this.nextStep(false);
-    },
-    dealWithClick(colour) {
-      console.log('dealing with click', colour); 
-      this.incrementClicks();
-      this.compareSequence(colour);
     },
     nextStep (bool) {
       // do this!!
