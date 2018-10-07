@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const FLASH = 250,
     SHORT_INTERVAL = 1500,
     LONG_INTERVAL = SHORT_INTERVAL * 1.2,
-    MOVES = 20,
+    MOVES = 5, //20,
     WEDGES = {
       colours: ['green', 'red', 'blue', 'yellow'],
       // Causes a wedge of specified colour to brighten and then dim 
@@ -152,10 +152,18 @@ document.addEventListener('DOMContentLoaded', function() {
           this.playerStop();
           setTimeout(function(){computer.addStepPlaySequence();}, LONG_INTERVAL);
         } 
-      } else { //colours didn't match, so play sequence from beginning
+      } else { //colours didn't match, so play sequence from beginning or start new sequence if strict
         this.playerStop();
         stateModifiers.resetStep();
-        setTimeout(function(){computer.addStepPlaySequence();}, LONG_INTERVAL);
+        if (states.strict) {
+          setTimeout(function(){
+            round = new Round();
+            round.start();
+          }, LONG_INTERVAL);
+          
+        } else {
+          setTimeout(function(){computer.addStepPlaySequence();}, LONG_INTERVAL);
+        }        
       }
     },
     playerStop () {
@@ -172,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   // Game states and methods that modify them
   let states = {
-    strict = false;
+    strict: false
   }
 
   let stateModifiers = {
