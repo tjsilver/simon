@@ -305,8 +305,10 @@ document.addEventListener('DOMContentLoaded', function() {
     this.start = () => {
       console.log("game started");
       stateModifiers.turnGameOn();
-      console.log('states.gameOn:', states.gameOn);    
-      startRound();
+      console.log('states.gameOn:', states.gameOn); 
+      DISPLAY.flashText('--', '');
+      setTimeout(startRound, SHORT_INTERVAL);
+      //startRound();
     };
   }
 
