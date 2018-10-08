@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const FLASH = 250,
     SHORT_INTERVAL = 1500,
     LONG_INTERVAL = SHORT_INTERVAL * 1.2,
-    MOVES = 20,
+    MOVES = 3,//20,
     WEDGES = {
       colours: ['green', 'red', 'blue', 'yellow'],
       sounds: {
@@ -84,8 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return Math.floor(Math.random() * 3);
       }
     },
-    DISPLAY = {
-      
+    DISPLAY = {      
       flashText(onText, offText) {
         console.log('flash');
         this.displayText(onText);
@@ -254,6 +253,11 @@ document.addEventListener('DOMContentLoaded', function() {
           player.playerStop();
           // display that player has won TODO
           DISPLAY.flashText(':)', '--');
+          setTimeout(function(){
+            let game = new Game();
+            game.start();
+          }, LONG_INTERVAL);
+          
         } else if (states.numPlayerClicks === states.currentStep) { // max number of clicks reached
           player.playerStop();
           setTimeout(function(){
