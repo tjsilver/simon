@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const FLASH = 250,
     SHORT_INTERVAL = 1500,
     LONG_INTERVAL = SHORT_INTERVAL * 1.2,
-    MOVES = 3, //20,
+    MOVES = 20,
     WEDGES = {
       colours: ['green', 'red', 'blue', 'yellow'],
       sounds: {
@@ -85,15 +85,18 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     },
     DISPLAY = {
-      /*
-      flash () {
+      
+      flashText(onText, offText) {
         console.log('flash');
-        this.displayText('--');
+        this.displayText(onText);
         setTimeout(function() {
-          DISPLAY.displayText('');
-        }, 100);
-      },*/
+          DISPLAY.displayText(offText);
+        }, SHORT_INTERVAL);
+      },
       displayText(txt) {
+        if (parseInt(txt) <= 9) {
+          txt = '0' + txt;
+        }
         document.getElementById('display').innerHTML = txt;
       }
     };
@@ -155,34 +158,10 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('compareColours','states.currentStepSequence', states.currentStepSequence, 'colour', colour, 'numPlayerClicks', states.numPlayerClicks, 'currentStepSequence.length', states.currentStepSequence.length);
       if (colour === states.currentStepSequence[states.numPlayerClicks-1]) { // colours match?
         console.log('compareColours is returning true');
-        return this.nextStep(true);
+        return computer.nextStep(true);
       }
       console.log('compareColours is returning false');
-      return this.nextStep(false);
-    },
-    nextStep (bool) {
-      if (bool && states.gameOn) { // colours matched on last test
-        if (states.numPlayerClicks === MOVES) { // player has won! 
-          stateModifiers.turnGameOff();
-          this.playerStop();
-          // display that player has won TODO
-          console.log('YOU WON!!')
-        } else if (states.numPlayerClicks === states.currentStep) { // max number of clicks reached
-          this.playerStop();
-          setTimeout(function(){computer.addStepPlaySequence();}, LONG_INTERVAL);
-        } 
-      } else { //colours didn't match, so play sequence from beginning or start new sequence if strict
-        this.playerStop();
-        if (states.strict) { //strict mode is on so start a new round and sequence
-          setTimeout(function(){
-            round = new Round();
-            round.start();
-          }, LONG_INTERVAL);
-          
-        } else { // play up to the currentstep again
-          setTimeout(function(){computer.playSequence(0, states.currentStepSequence);}, LONG_INTERVAL);
-        }        
-      }
+      return computer.nextStep(false);
     },
     playerStop () {
       console.log('playerStop');
@@ -265,9 +244,40 @@ document.addEventListener('DOMContentLoaded', function() {
     addStepPlaySequence() {
       stateModifiers.addStep();
       console.log('currentStep incremented to', states.currentStep, states.currentStepSequence);
-      DISPLAY.displayText(states.currentStep); // FIX THIS SO THAT IT GOES BACK TO 1 IF PLAYER MAKES MISTAKE ON NON-STRICT
+      DISPLAY.displayText(states.currentStep); 
       this.playSequence(0, states.currentStepSequence);
-    },  
+    }, 
+    nextStep (bool) {
+      if (bool && states.gameOn) { // colours matched on last test
+        if (states.numPlayerClicks === MOVES) { // player has won! 
+          stateModifiers.turnGameOff();
+          player.playerStop();
+          // display that player has won TODO
+          DISPLAY.flashText(':)', '--');
+        } else if (states.numPlayerClicks === states.currentStep) { // max number of clicks reached
+          player.playerStop();
+          setTimeout(function(){
+            computer.addStepPlaySequence();
+          }, LONG_INTERVAL);
+        } 
+      } else { //colours didn't match, so play sequence from beginning or start new sequence if strict
+        player.playerStop();
+        
+        if (states.strict) { //strict mode is on so start a new round and sequence
+          DISPLAY.flashText('!!!', '');
+          setTimeout(function(){
+            round = new Round();
+            round.start();
+          }, LONG_INTERVAL);
+          
+        } else { // play up to the currentstep again 
+          DISPLAY.flashText('!!!', states.currentStep);
+          setTimeout(function(){
+            computer.playSequence(0, states.currentStepSequence);
+          }, LONG_INTERVAL);
+        }        
+      }
+    }, 
   }
   
   function Round() {    
