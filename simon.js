@@ -17,17 +17,17 @@ User Story: I can play in strict mode where if I get a button press wrong, it no
 User Story: I can win the game by getting a series of 20 steps correct. I am notified of my victory, then the game starts over.
 */
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   // global variables 
   const FLASH = 250,
     SHORT_INTERVAL = 1500,
     LONG_INTERVAL = SHORT_INTERVAL * 1.2,
-    MOVES = 3,//20,
+    MOVES = 3, //20,
     WEDGES = {
       colours: ['green', 'red', 'blue', 'yellow'],
       sounds: {
-        green: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound1.mp3'), 
-        red: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound2.mp3'), 
+        green: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound1.mp3'),
+        red: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound2.mp3'),
         blue: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound3.mp3'),
         yellow: new Audio('https://s3.amazonaws.com/freecodecamp/simonSound4.mp3')
       },
@@ -35,19 +35,19 @@ document.addEventListener('DOMContentLoaded', function() {
         this.sounds[colour].play();
       },
       // Causes a wedge of specified colour to brighten and then dim 
-      lightup (colour, speed, func) {
-        console.log('lightup');
+      lightup(colour, speed, func) {
+
         let wedge = this.getWedge(colour);
         this.brighten(wedge);
         this.playsound(colour);
-        setTimeout(function() {
+        setTimeout(function () {
           WEDGES.dim(wedge);
           func ? func() : null;
         }, speed);
       },
       // Turns on listeners for this.colours
       openWedges() {
-        console.log('openWedges()');
+
         for (let i = 0; i < this.colours.length; i++) {
           document.getElementById(this.colours[i]).classList.remove('closed');
           document.getElementById(this.colours[i]).classList.add('open');
@@ -70,25 +70,25 @@ document.addEventListener('DOMContentLoaded', function() {
       // Dims a wedge
       dim(wedge) {
         wedge.classList.add('dark');
-        wedge.classList.remove('light');        
+        wedge.classList.remove('light');
       },
       // Gets a wedge 
       getWedge(colour) {
         return document.getElementById(colour);
       },
-      wedgeClick (e) {
+      wedgeClick(e) {
         return player.dealWithClick(e.target.id);
-      },       
+      },
       // Generates a random number between 0 and 3.
       randomColourIndex() {
         return Math.floor(Math.random() * 3);
       }
     },
-    DISPLAY = {      
+    DISPLAY = {
       flashText(onText, offText) {
-        console.log('flash');
+
         this.displayText(onText);
-        setTimeout(function() {
+        setTimeout(function () {
           DISPLAY.displayText(offText);
         }, SHORT_INTERVAL);
       },
@@ -99,30 +99,30 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('display').innerHTML = txt;
       }
     };
-    
-    
+
+
 
   // buttons
-    const start = getButton('start'),
-      strict = getButton('strict'),
-      strictIndicator = getButton('strict-indicator');
-    
-    function getButton(button) {
-      return document.getElementById(button);
-    }
+  const start = getButton('start'),
+    strict = getButton('strict'),
+    strictIndicator = getButton('strict-indicator');
 
-    function buttonDown(button) {
-      button.classList.add('pressed');
-    }
+  function getButton(button) {
+    return document.getElementById(button);
+  }
 
-    function buttonUp(button) {
-      button.classList.remove('pressed');
-    }
+  function buttonDown(button) {
+    button.classList.add('pressed');
+  }
 
-    function setButtonListeners() {
-      this.start.addEventListener('click', startPress, false);
-      this.strict.addEventListener('click', useStrict, false);
-    }
+  function buttonUp(button) {
+    button.classList.remove('pressed');
+  }
+
+  function setButtonListeners() {
+    this.start.addEventListener('click', startPress, false);
+    this.strict.addEventListener('click', useStrict, false);
+  }
 
   // strict mode
   function useStrict() {
@@ -135,12 +135,12 @@ document.addEventListener('DOMContentLoaded', function() {
       strictIndicator.classList.remove('on');
       states.strict = false;
     }
-    console.log('strict status', states.strict);
+
   }
 
   // Initiates a game. 
   function startPress() {
-    console.log('startPress');
+
     let game = new Game();
     game.start();
   }
@@ -148,29 +148,29 @@ document.addEventListener('DOMContentLoaded', function() {
   // Functions that deal with the player clicks
   let player = {
     dealWithClick(colour) {
-      console.log('dealing with click', colour); 
+
       WEDGES.lightup(colour, FLASH, null);
       stateModifiers.incrementClicks();
       this.compareColours(colour);
     },
-    compareColours(colour) {    
-      console.log('compareColours','states.currentStepSequence', states.currentStepSequence, 'colour', colour, 'numPlayerClicks', states.numPlayerClicks, 'currentStepSequence.length', states.currentStepSequence.length);
-      if (colour === states.currentStepSequence[states.numPlayerClicks-1]) { // colours match?
-        console.log('compareColours is returning true');
+    compareColours(colour) {
+
+      if (colour === states.currentStepSequence[states.numPlayerClicks - 1]) { // colours match?
+
         return computer.nextStep(true);
       }
-      console.log('compareColours is returning false');
+
       return computer.nextStep(false);
     },
-    playerStop () {
-      console.log('playerStop');
-      WEDGES.closeWedges(); 
+    playerStop() {
+
+      WEDGES.closeWedges();
       return stateModifiers.setPlayerTurnState(false);
     },
     playerGo() {
-      console.log('playerGo');
+
       WEDGES.openWedges();
-      stateModifiers.resetPlayerClicks();   
+      stateModifiers.resetPlayerClicks();
       return stateModifiers.setPlayerTurnState(true);
     }
   }
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   let stateModifiers = {
-    turnGameOn(){
+    turnGameOn() {
       states.gameOn = true;
     },
     turnGameOff() {
@@ -193,31 +193,32 @@ document.addEventListener('DOMContentLoaded', function() {
       states.numPlayerClicks = 0;
       //states.correct = true;
       states.currentStepSequence = [];
-    },/*
-    setCorrect(bool) {
-      states.correct = bool;
-      console.log('setCorrect(), states.correct:', states.correct);
-    },*/
+    },
+    /*
+        setCorrect(bool) {
+          states.correct = bool;
+          
+        },*/
     incrementClicks() {
-      console.log('incrementClicks(), numPlayerClicks:', states.numPlayerClicks + 1);
-      return states.numPlayerClicks++;      
+
+      return states.numPlayerClicks++;
     },
     addStep() {
       states.currentStep++;
       this.setCurrentStepSequence();
-    }, 
+    },
     // Returns an array containing a MOVES number of random indices of the wedge colours
     fillSequence() {
       for (i = 0; i < MOVES; i++) {
         states.sequence.push(WEDGES.colours[WEDGES.randomColourIndex()]);
       }
     },
-    setPlayerTurnState(bool){
-      console.log('setPlayerTurnState with:', bool);
-        return states.playerTurn = bool;
+    setPlayerTurnState(bool) {
+
+      return states.playerTurn = bool;
     },
     resetPlayerClicks() {
-      console.log('resetPlayerClicks');
+
       return states.numPlayerClicks = 0;
     },
     resetStep() {
@@ -231,71 +232,73 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Computer functions
   let computer = {
-    playSequence (i, arr) {
+    playSequence(i, arr) {
       if (arr[i]) {
-          WEDGES.lightup(arr[i], SHORT_INTERVAL, null);
-          setTimeout(function(){computer.playSequence(i+1, arr);}, SHORT_INTERVAL + 200);
+        WEDGES.lightup(arr[i], SHORT_INTERVAL, null);
+        setTimeout(function () {
+          computer.playSequence(i + 1, arr);
+        }, SHORT_INTERVAL + 200);
       } else {
-        console.log('sequence played, returning playerGo');
+
         return player.playerGo();
       }
     },
     addStepPlaySequence() {
       stateModifiers.addStep();
-      console.log('currentStep incremented to', states.currentStep, states.currentStepSequence);
-      DISPLAY.displayText(states.currentStep); 
+
+      DISPLAY.displayText(states.currentStep);
       this.playSequence(0, states.currentStepSequence);
-    }, 
-    nextStep (bool) {
+    },
+    nextStep(bool) {
       if (bool && states.gameOn) { // colours matched on last test
         if (states.numPlayerClicks === MOVES) { // player has won! 
           stateModifiers.turnGameOff();
           player.playerStop();
           // display that player has won TODO
           DISPLAY.flashText(':)', '--');
-          setTimeout(function(){
+          setTimeout(function () {
             let game = new Game();
             game.start();
           }, LONG_INTERVAL);
-          
+
         } else if (states.numPlayerClicks === states.currentStep) { // max number of clicks reached
           player.playerStop();
-          setTimeout(function(){
+          setTimeout(function () {
             computer.addStepPlaySequence();
           }, LONG_INTERVAL);
-        } 
+        }
       } else { //colours didn't match, so play sequence from beginning or start new sequence if strict
         player.playerStop();
-        
+
         if (states.strict) { //strict mode is on so start a new round and sequence
           DISPLAY.flashText('!!!', '');
-          setTimeout(function(){
+          setTimeout(function () {
             round = new Round();
             round.start();
           }, LONG_INTERVAL);
-          
+
         } else { // play up to the currentstep again 
           DISPLAY.flashText('!!!', states.currentStep);
-          setTimeout(function(){
+          setTimeout(function () {
             computer.playSequence(0, states.currentStepSequence);
           }, LONG_INTERVAL);
-        }        
+        }
       }
-    }, 
+    },
   }
-  
-  function Round() {    
+
+  function Round() {
     //public methods
     this.start = () => {
-      console.log("round started!");
+
       DISPLAY.displayText('--');
       stateModifiers.initRound();
       stateModifiers.fillSequence();
-      console.log('Round.sequence: ', states.sequence);
-      console.log("states.gameOn, states.sequence, playerTurn",states.gameOn, states.sequence, states.playerTurn);
+
+
       computer.addStepPlaySequence();
-      console.log('currentStepSequence', states.currentStepSequence);
-      
+
+
     }
   }
 
@@ -307,9 +310,9 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     // public methods
     this.start = () => {
-      console.log("game started");
+
       stateModifiers.turnGameOn();
-      console.log('states.gameOn:', states.gameOn); 
+
       DISPLAY.flashText('--', '');
       setTimeout(startRound, SHORT_INTERVAL);
       //startRound();
@@ -318,4 +321,3 @@ document.addEventListener('DOMContentLoaded', function() {
 
   setButtonListeners();
 }); // end DOMContentLoaded
-
