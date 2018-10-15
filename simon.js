@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function () {
       },
       // Causes a wedge of specified colour to brighten and then dim 
       lightup(colour, speed, func) {
-
         let wedge = this.getWedge(colour);
         this.brighten(wedge);
         this.playsound(colour);
@@ -47,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
       },
       // Turns on listeners for this.colours
       openWedges() {
-
         for (let i = 0; i < this.colours.length; i++) {
           document.getElementById(this.colours[i]).classList.remove('closed');
           document.getElementById(this.colours[i]).classList.add('open');
@@ -86,7 +84,6 @@ document.addEventListener('DOMContentLoaded', function () {
     },
     DISPLAY = {
       flashText(onText, offText) {
-
         this.displayText(onText);
         setTimeout(function () {
           DISPLAY.displayText(offText);
@@ -99,8 +96,6 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('display').innerHTML = txt;
       }
     };
-
-
 
   // buttons
   const start = getButton('start'),
@@ -239,13 +234,11 @@ document.addEventListener('DOMContentLoaded', function () {
           computer.playSequence(i + 1, arr);
         }, SHORT_INTERVAL + 200);
       } else {
-
         return player.playerGo();
       }
     },
     addStepPlaySequence() {
       stateModifiers.addStep();
-
       DISPLAY.displayText(states.currentStep);
       this.playSequence(0, states.currentStepSequence);
     },
@@ -260,7 +253,6 @@ document.addEventListener('DOMContentLoaded', function () {
             let game = new Game();
             game.start();
           }, LONG_INTERVAL);
-
         } else if (states.numPlayerClicks === states.currentStep) { // max number of clicks reached
           player.playerStop();
           setTimeout(function () {
@@ -269,14 +261,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       } else { //colours didn't match, so play sequence from beginning or start new sequence if strict
         player.playerStop();
-
         if (states.strict) { //strict mode is on so start a new round and sequence
           DISPLAY.flashText('!!!', '');
           setTimeout(function () {
             round = new Round();
             round.start();
           }, LONG_INTERVAL);
-
         } else { // play up to the currentstep again 
           DISPLAY.flashText('!!!', states.currentStep);
           setTimeout(function () {
@@ -290,15 +280,10 @@ document.addEventListener('DOMContentLoaded', function () {
   function Round() {
     //public methods
     this.start = () => {
-
       DISPLAY.displayText('--');
       stateModifiers.initRound();
       stateModifiers.fillSequence();
-
-
       computer.addStepPlaySequence();
-
-
     }
   }
 
@@ -310,9 +295,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
     // public methods
     this.start = () => {
-
       stateModifiers.turnGameOn();
-
       DISPLAY.flashText('--', '');
       setTimeout(startRound, SHORT_INTERVAL);
       //startRound();
