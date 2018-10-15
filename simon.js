@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const FLASH = 250,
     SHORT_INTERVAL = 1500,
     LONG_INTERVAL = SHORT_INTERVAL * 1.2,
-    MOVES = 3, //20,
+    MOVES = 20,
     WEDGES = {
       colours: ['green', 'red', 'blue', 'yellow'],
       sounds: {
